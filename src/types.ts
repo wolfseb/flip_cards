@@ -1,3 +1,5 @@
+export type Quality = 0 | 1 | 2 | 3 | 4 | 5;
+
 export interface Card {
     id: string;
     front: string;
@@ -11,9 +13,9 @@ export interface Card {
     createdAt: string; // ISO date string
 }
 
-export interface PracticeCard extends Card {
-    guesses: number;
-    done: boolean;
+export interface StudyCard extends Card {
+    quality: Quality;
+    isDone: boolean;
 }
 
 export type Screen = { name: 'home' } | { name: 'study' } | { name: 'edit'; cardId?: string };

@@ -1,8 +1,7 @@
-import { Quality } from './components/rating.types';
-import { Card, PracticeCard } from './types';
+import { Card, StudyCard } from '../../types';
 
-export const applyReview = (card: Card, quality: Quality): Card => {
-    let { repetitions, easeFactor, interval } = card;
+export const applyReview = (card: StudyCard): StudyCard => {
+    let { repetitions, easeFactor, interval, quality } = card;
 
     if (quality >= 3) {
         // Correct response: advance interval
@@ -29,6 +28,7 @@ export const applyReview = (card: Card, quality: Quality): Card => {
         interval,
         nextReview: next.toISOString(),
         level: Math.min(repetitions + 1, 5),
+        isDone: true,
     };
 };
 
@@ -36,18 +36,18 @@ export const isDue = (card: Card): boolean => {
     return new Date(card.nextReview) <= new Date();
 };
 
-export const getDueCards = (cards: Card[]): PracticeCard[] => {
-    return cards
-        .filter(isDue)
-        .map(card => ({
-            ...card,
-            guesses: 0,
-            done: false,
-        }))
-        .sort((a, b) => new Date(a.nextReview).getTime() - new Date(b.nextReview).getTime());
+export const toStudyCard = (card: Card): StudyCard => ({
+    ...card,
+    quality: 5,
+    isDone: false,
+});
+
+export const toCard = (card: StudyCard): Card => {
+    const { quality: _quality, isDone: _isDone, ...rest } = card;
+    return rest;
 };
 
-export const shuffleCards = (cards: PracticeCard[]): PracticeCard[] => {
+export const shuffleCards = (cards: StudyCard[]): StudyCard[] => {
     let order = cards.slice();
     for (let i = order.length; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));

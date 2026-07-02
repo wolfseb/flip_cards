@@ -10,6 +10,11 @@ export const SORT_MAP = {
 
 export type SortKey = keyof typeof SORT_MAP;
 
+export type SortState = {
+    key?: SortKey;
+    asc?: boolean;
+};
+
 export const sortLabel = (sortKey: SortKey): string => SORT_MAP[sortKey];
 
 const comparators: Record<SortKey, (a: Card, b: Card) => number> = {
@@ -20,7 +25,14 @@ const comparators: Record<SortKey, (a: Card, b: Card) => number> = {
     createdAt: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
 };
 
-export const sortCards = (cards: Card[], key: SortKey, asc: boolean): Card[] => {
+export const sortCards = (
+    cards: Card[],
+    key: SortKey | undefined,
+    asc: boolean | undefined,
+): Card[] => {
+    if (key === undefined || asc === undefined) {
+        return cards;
+    }
     const cmp = comparators[key];
     return [...cards].sort((a, b) => (asc ? cmp(a, b) : cmp(b, a)));
 };

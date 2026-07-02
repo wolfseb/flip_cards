@@ -4,15 +4,15 @@ import { Card } from './types';
 
 const KEY = 'flipcards_data';
 
-export async function loadCards(): Promise<Card[]> {
+export const loadCards = async (): Promise<Card[]> => {
     try {
         const raw = await AsyncStorage.getItem(KEY);
         return raw ? (JSON.parse(raw) as Card[]) : [];
     } catch {
         return [];
     }
-}
+};
 
-export async function saveCards(cards: Card[]): Promise<void> {
+export const saveCards = async (cards: Card[]): Promise<void> => {
     await AsyncStorage.setItem(KEY, JSON.stringify(cards));
-}
+};

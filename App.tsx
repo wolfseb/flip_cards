@@ -1,99 +1,46 @@
-import { useEffect, useState } from 'react';
-import { Alert } from 'react-native';
+import { JSX, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Card, PracticeCard, Screen } from './src/types';
-import { loadCards, saveCards } from './src/storage';
-import { applyReview, getDueCards, shuffleCards } from './src/sm2';
-import HomeScreen from './src/screens/HomeScreen';
-import StudyScreen from './src/screens/StudyScreen';
+import { Card, Screen, StudyCard } from './src/types';
+import { CardsContextProvider, useCards } from './src/CardsContext';
+import HomeScreen from './src/screens/homeScreen/HomeScreen';
+import StudyScreen from './src/screens/studyScreen/StudyScreen';
 import EditScreen from './src/screens/EditScreen';
-import { Quality } from './src/components/rating.types';
+import { shuffleCards, toStudyCard } from './src/screens/studyScreen/sm2';
 
-export default function App() {
-    const [cards, setCards] = useState<Card[]>([]);
+const AppContent = (): JSX.Element => {
+    const { cards } = useCards();
     const [screen, setScreen] = useState<Screen>({ name: 'home' });
-    const [studyQueue, setStudyQueue] = useState<PracticeCard[]>([]);
-
-    useEffect(() => {
-        loadCards().then(setCards);
-    }, []);
-
-    const persist = (updated: Card[]) => {
-        setCards(updated);
-        saveCards(updated);
-    };
-
-    const handleStudy = () => {
-        setStudyQueue(shuffleCards(getDueCards(cards)));
-        setScreen({ name: 'study' });
-    };
-
-    const handleRate = (cardId: string, quality: Quality) => {
-        persist(cards.map(c => (c.id === cardId ? applyReview(c, quality) : c)));
-    };
-
-    const handleSave = (front: string, back: string) => {
-        if (screen.name !== 'edit') return;
-
-        if (screen.cardId) {
-            persist(cards.map(c => (c.id === screen.cardId ? { ...c, front, back } : c)));
-        } else {
-            const now = new Date().toISOString();
-            const newCard: Card = {
-                id: Date.now().toString(),
-                front,
-                back,
-                interval: 0,
-                repetitions: 0,
-                easeFactor: 2.5,
-                nextReview: now,
-                level: 1,
-                createdAt: now,
-            };
-            persist([...cards, newCard]);
-        }
-        setScreen({ name: 'home' });
-    };
-
-    const handleDelete = (id: string) => {
-        Alert.alert('Delete card', 'This card will be permanently removed.', [
-            { text: 'Cancel', style: 'cancel' },
-            {
-                text: 'Delete',
-                style: 'destructive',
-                onPress: () => persist(cards.filter(c => c.id !== id)),
-            },
-        ]);
-    };
 
     let content;
     if (screen.name === 'study') {
-        content = (
-            <StudyScreen
-                cards={studyQueue}
-                onRate={handleRate}
-                onDone={() => setScreen({ name: 'home' })}
-            />
-        );
+        content = <StudyScreen onDone={() => setScreen({ name: 'home' })} />;
     } else if (screen.name === 'edit') {
         content = (
             <EditScreen
+                screen={screen}
                 card={cards.find(c => c.id === screen.cardId)}
-                onSave={handleSave}
-                onCancel={() => setScreen({ name: 'home' })}
+                onReturn={() => setScreen({ name: 'home' })}
             />
         );
     } else {
         content = (
             <HomeScreen
-                cards={cards}
-                onStudy={handleStudy}
+                onStudy={() => setScreen({ name: 'study' })}
                 onAddCard={() => setScreen({ name: 'edit' })}
                 onEditCard={id => setScreen({ name: 'edit', cardId: id })}
-                onDeleteCard={handleDelete}
             />
         );
     }
 
     return <SafeAreaProvider>{content}</SafeAreaProvider>;
-}
+};
+
+const App = (): JSX.Element => {
+    return (
+        <CardsContextProvider>
+            <AppContent />
+        </CardsContextProvider>
+    );
+};
+
+export default App;

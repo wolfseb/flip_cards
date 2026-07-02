@@ -1,19 +1,23 @@
-import React, { JSX, useRef, useState } from 'react';
+import React, { JSX, useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text } from 'react-native';
 
 interface Props {
     front: string;
     back: string;
+    flipped?: boolean;
     onFlip?: (flipped: boolean) => void;
+    tintColor?: string;
 }
 
 const CardFace = ({
     anim,
     isFront = false,
+    tintColor,
     children,
 }: {
     anim: Animated.Value;
     isFront?: boolean;
+    tintColor?: string;
     children: React.JSX.Element;
 }): JSX.Element => {
     const rotate = anim.interpolate({
@@ -26,6 +30,7 @@ const CardFace = ({
             style={[
                 styles.face,
                 isFront ? styles.front : styles.back,
+                tintColor ? { backgroundColor: tintColor } : null,
                 { transform: [{ perspective: 1000 }, { rotateY: rotate }] },
             ]}
         >
@@ -36,12 +41,11 @@ const CardFace = ({
     );
 };
 
-const FlipCard = ({ front, back, onFlip }: Props): JSX.Element => {
+const FlipCard = ({ front, back, flipped: forceFlipped, onFlip, tintColor }: Props): JSX.Element => {
     const [flipped, setFlipped] = useState(false);
     const anim = useRef(new Animated.Value(0)).current;
 
-    const flip = (): void => {
-        const next = !flipped;
+    const flip = (next: boolean): void => {
         Animated.spring(anim, {
             toValue: next ? 1 : 0,
             friction: 8,
@@ -52,12 +56,18 @@ const FlipCard = ({ front, back, onFlip }: Props): JSX.Element => {
         onFlip?.(next);
     };
 
+    useEffect(() => {
+        if (forceFlipped && !flipped) {
+            flip(true);
+        }
+    }, [forceFlipped]);
+
     return (
-        <Pressable style={styles.container} onPress={flip}>
-            <CardFace anim={anim} isFront>
+        <Pressable style={styles.container} onPress={() => flip(!flipped)}>
+            <CardFace anim={anim} isFront tintColor={tintColor}>
                 <div>{front}</div>
             </CardFace>
-            <CardFace anim={anim}>
+            <CardFace anim={anim} tintColor={tintColor}>
                 <div>{back}</div>
             </CardFace>
         </Pressable>

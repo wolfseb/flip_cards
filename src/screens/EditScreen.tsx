@@ -10,24 +10,50 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Card } from '../types';
+import { Card, Screen } from '../types';
+import { useCards } from '../CardsContext';
 
 interface Props {
+    screen: Screen;
     card?: Card; // undefined = new card
-    onSave: (front: string, back: string) => void;
-    onCancel: () => void;
+    onReturn: () => void;
 }
 
-export default function EditScreen({ card, onSave, onCancel }: Props): JSX.Element {
+const EditScreen = ({ screen, card, onReturn }: Props): JSX.Element => {
+    const { cards, persist } = useCards();
+
     const [front, setFront] = useState(card?.front ?? '');
     const [back, setBack] = useState(card?.back ?? '');
 
     const canSave = front.trim().length > 0 && back.trim().length > 0;
 
+    const onSave = (front: string, back: string) => {
+        if (screen.name !== 'edit') return;
+
+        if (screen.cardId) {
+            persist(cards.map(c => (c.id === screen.cardId ? { ...c, front, back } : c)));
+        } else {
+            const now = new Date().toISOString();
+            const newCard: Card = {
+                id: Date.now().toString(),
+                front,
+                back,
+                interval: 0,
+                repetitions: 0,
+                easeFactor: 2.5,
+                nextReview: now,
+                level: 1,
+                createdAt: now,
+            };
+            persist([...cards, newCard]);
+        }
+        onReturn();
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Pressable onPress={onCancel}>
+                <Pressable onPress={onReturn}>
                     <Text style={styles.cancelText}>Cancel</Text>
                 </Pressable>
                 <Text style={styles.title}>{card ? 'Edit Card' : 'New Card'}</Text>
@@ -72,7 +98,9 @@ export default function EditScreen({ card, onSave, onCancel }: Props): JSX.Eleme
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
-}
+};
+
+export default EditScreen;
 
 const styles = StyleSheet.create({
     container: {
