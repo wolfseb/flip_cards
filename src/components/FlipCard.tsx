@@ -1,109 +1,125 @@
-import React, { useRef, useState } from 'react';
+import React, { JSX, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text } from 'react-native';
 
 interface Props {
-  front: string;
-  back: string;
-  onFlip?: (flipped: boolean) => void;
+    front: string;
+    back: string;
+    onFlip?: (flipped: boolean) => void;
 }
 
-export default function FlipCard({ front, back, onFlip }: Props) {
-  const [flipped, setFlipped] = useState(false);
-  const anim = useRef(new Animated.Value(0)).current;
+const CardFace = ({
+    anim,
+    isFront = false,
+    children,
+}: {
+    anim: Animated.Value;
+    isFront?: boolean;
+    children: React.JSX.Element;
+}): JSX.Element => {
+    const rotate = anim.interpolate({
+        inputRange: [0, 1],
+        outputRange: isFront ? ['0deg', '180deg'] : ['180deg', '360deg'],
+    });
 
-  const flip = () => {
-    const next = !flipped;
-    Animated.spring(anim, {
-      toValue: next ? 1 : 0,
-      friction: 8,
-      tension: 40,
-      useNativeDriver: true,
-    }).start();
-    setFlipped(next);
-    onFlip?.(next);
-  };
+    return (
+        <Animated.View
+            style={[
+                styles.face,
+                isFront ? styles.front : styles.back,
+                { transform: [{ perspective: 1000 }, { rotateY: rotate }] },
+            ]}
+        >
+            <Text style={styles.sideLabel}>{isFront ? 'Front' : 'Back'}</Text>
+            <Text style={styles.cardText}>{children}</Text>
+            <Text style={styles.bottomLabel}>Tap card to flip</Text>
+        </Animated.View>
+    );
+};
 
-  const frontRotate = anim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
-  });
-  const backRotate = anim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['180deg', '360deg'],
-  });
+const FlipCard = ({ front, back, onFlip }: Props): JSX.Element => {
+    const [flipped, setFlipped] = useState(false);
+    const anim = useRef(new Animated.Value(0)).current;
 
-  return (
-    <Pressable style={styles.container} onPress={flip}>
-      {/* Front face */}
-      <Animated.View
-        style={[
-          styles.face,
-          styles.front,
-          { transform: [{ perspective: 1000 }, { rotateY: frontRotate }] },
-        ]}
-      >
-        <Text style={styles.sideLabel}>Front</Text>
-        <Text style={styles.cardText}>{front}</Text>
-      </Animated.View>
+    const flip = (): void => {
+        const next = !flipped;
+        Animated.spring(anim, {
+            toValue: next ? 1 : 0,
+            friction: 8,
+            tension: 40,
+            useNativeDriver: true,
+        }).start();
+        setFlipped(next);
+        onFlip?.(next);
+    };
 
-      {/* Back face */}
-      <Animated.View
-        style={[
-          styles.face,
-          styles.back,
-          { transform: [{ perspective: 1000 }, { rotateY: backRotate }] },
-        ]}
-      >
-        <Text style={styles.sideLabel}>Back</Text>
-        <Text style={styles.cardText}>{back}</Text>
-      </Animated.View>
-    </Pressable>
-  );
-}
+    return (
+        <Pressable style={styles.container} onPress={flip}>
+            <CardFace anim={anim} isFront>
+                <div>{front}</div>
+            </CardFace>
+            <CardFace anim={anim}>
+                <div>{back}</div>
+            </CardFace>
+        </Pressable>
+    );
+};
+
+export default FlipCard;
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: 240,
-  },
-  face: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-    backfaceVisibility: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  front: {
-    backgroundColor: '#ffffff',
-  },
-  back: {
-    backgroundColor: '#F0F4FF',
-  },
-  sideLabel: {
-    position: 'absolute',
-    top: 14,
-    left: 18,
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#9CA3AF',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  cardText: {
-    fontSize: 22,
-    fontWeight: '500',
-    color: '#1A1A2E',
-    textAlign: 'center',
-    lineHeight: 32,
-  },
+    container: {
+        width: '100%',
+        height: 240,
+        maxWidth: 400,
+    },
+    face: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+        backfaceVisibility: 'hidden',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    front: {
+        backgroundColor: '#ffffff',
+    },
+    back: {
+        backgroundColor: '#f0f4ff',
+    },
+    sideLabel: {
+        position: 'absolute',
+        top: 14,
+        left: 18,
+        fontSize: 11,
+        fontWeight: '700',
+        color: '#9CA3AF',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+    },
+    bottomLabel: {
+        position: 'absolute',
+        bottom: 14,
+        fontSize: 11,
+        textAlign: 'center',
+        fontWeight: '700',
+        color: '#9CA3AF',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+    },
+    cardText: {
+        fontSize: 22,
+        fontWeight: '500',
+        color: '#1A1A2E',
+        textAlign: 'center',
+        lineHeight: 32,
+    },
 });
