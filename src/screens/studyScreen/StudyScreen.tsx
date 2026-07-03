@@ -1,5 +1,6 @@
-import { JSX, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCards } from '../../CardsContext';
@@ -8,7 +9,6 @@ import DoneScreen from './DoneScreen';
 import FlipCard from './FlipCard';
 import Header from './Header';
 import { applyReview, shuffleCards, toCard } from './sm2';
-import { Button, TextInput } from 'react-native-paper';
 
 const INCORRECT_COLOR = '#EF444433';
 
@@ -37,6 +37,16 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
     const getDoneCards = (): Card[] => currentCards.filter(c => c.isDone).map(toCard);
     const getRestCards = (): StudyCard[] => currentCards.filter(c => !c.isDone);
 
+    useEffect(() => {
+        if (currentCards.length === 0 || index < currentCards.length) return;
+
+        const doneById = new Map(getDoneCards().map(c => [c.id, c]));
+        persist(cards.map(c => doneById.get(c.id) ?? c));
+
+        setCurrentCards(shuffleCards(getRestCards()));
+        setIndex(0);
+    }, [index, currentCards]);
+
     if (currentCards.length === 0) {
         return (
             <SafeAreaView style={styles.container}>
@@ -46,11 +56,7 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
     }
 
     if (index >= currentCards.length) {
-        const doneById = new Map(getDoneCards().map(c => [c.id, c]));
-        persist(cards.map(c => doneById.get(c.id) ?? c));
-
-        setCurrentCards(shuffleCards(getRestCards()));
-        setIndex(0);
+        return <SafeAreaView style={styles.container} />;
     }
 
     const current = currentCards[index];
