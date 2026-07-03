@@ -1,11 +1,21 @@
 import { JSX, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { Card, Screen, StudyCard } from './src/types';
 import { CardsContextProvider, useCards } from './src/CardsContext';
 import HomeScreen from './src/screens/homeScreen/HomeScreen';
 import StudyScreen from './src/screens/studyScreen/StudyScreen';
 import EditScreen from './src/screens/EditScreen';
 import { shuffleCards, toStudyCard } from './src/screens/studyScreen/sm2';
+
+const theme = {
+    ...MD3LightTheme,
+    colors: {
+        ...MD3LightTheme.colors,
+        primary: '#5B8DEF',
+        background: '#F5F6FA',
+    },
+};
 
 const AppContent = (): JSX.Element => {
     const { cards } = useCards();
@@ -32,7 +42,11 @@ const AppContent = (): JSX.Element => {
         );
     }
 
-    return <SafeAreaProvider>{content}</SafeAreaProvider>;
+    return (
+        <SafeAreaProvider>
+            <PaperProvider theme={theme}>{content}</PaperProvider>
+        </SafeAreaProvider>
+    );
 };
 
 const App = (): JSX.Element => {

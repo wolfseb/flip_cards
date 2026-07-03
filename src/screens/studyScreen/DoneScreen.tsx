@@ -1,14 +1,19 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { JSX } from 'react/jsx-runtime';
+import { StyleSheet, View } from 'react-native';
+import { Button, Text } from 'react-native-paper';
 
 const DoneScreen = ({ onDone }: { onDone: () => void }): JSX.Element => {
     return (
         <View style={styles.doneView}>
-            <Text style={styles.doneTitle}>All done!</Text>
-            <Text style={styles.doneSub}>You reviewed all due cards.</Text>
-            <Pressable style={styles.doneBtn} onPress={onDone}>
-                <Text style={styles.doneBtnText}>Back to Home</Text>
-            </Pressable>
+            <Text variant="headlineMedium" style={styles.doneTitle}>
+                All done!
+            </Text>
+            <Text variant="bodyLarge" style={styles.doneSub}>
+                You reviewed all due cards.
+            </Text>
+            <Button mode="contained" onPress={onDone} style={styles.doneBtn}>
+                Back to Home
+            </Button>
         </View>
     );
 };
@@ -23,26 +28,16 @@ const styles = StyleSheet.create({
         padding: 40,
     },
     doneTitle: {
-        fontSize: 30,
         fontWeight: '700',
         color: '#1A1A2E',
     },
     doneSub: {
-        fontSize: 16,
         color: '#6B7280',
         marginTop: 8,
         textAlign: 'center',
     },
     doneBtn: {
         marginTop: 28,
-        backgroundColor: '#5B8DEF',
-        paddingHorizontal: 28,
-        paddingVertical: 14,
         borderRadius: 12,
-    },
-    doneBtnText: {
-        color: '#fff',
-        fontWeight: '600',
-        fontSize: 16,
     },
 });

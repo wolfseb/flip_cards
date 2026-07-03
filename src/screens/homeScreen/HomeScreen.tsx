@@ -1,12 +1,13 @@
 import { JSX } from 'react';
-import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, View } from 'react-native';
+import { Button, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useCards } from '../../CardsContext';
+import CardRow from './CardRow';
+import { SortButtonRow } from './SortButtonRow';
 import StatsRow from './StatsRow';
 import StudyRow from './StudyRow';
-import { useCards } from '../../CardsContext';
-import { SortButtonRow } from './SortButtonRow';
-import CardRow from './CardRow';
 
 interface Props {
     onStudy: () => void;
@@ -32,10 +33,12 @@ const HomeScreen = ({ onStudy, onAddCard, onEditCard }: Props): JSX.Element => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>FlipCards</Text>
-                <Pressable style={styles.addBtn} onPress={onAddCard}>
-                    <Text style={styles.addBtnText}>+ Add</Text>
-                </Pressable>
+                <Text variant="headlineSmall" style={styles.title}>
+                    FlipCards
+                </Text>
+                <Button mode="contained" onPress={onAddCard} compact>
+                    + Add
+                </Button>
             </View>
 
             <StatsRow />
@@ -44,8 +47,12 @@ const HomeScreen = ({ onStudy, onAddCard, onEditCard }: Props): JSX.Element => {
 
             {cards.length === 0 ? (
                 <View style={styles.empty}>
-                    <Text style={styles.emptyTitle}>No cards yet</Text>
-                    <Text style={styles.emptyHint}>Tap "+ Add" to create your first card.</Text>
+                    <Text variant="titleMedium" style={styles.emptyTitle}>
+                        No cards yet
+                    </Text>
+                    <Text variant="bodyMedium" style={styles.emptyHint}>
+                        Tap "+ Add" to create your first card.
+                    </Text>
                 </View>
             ) : (
                 <FlatList
@@ -79,20 +86,8 @@ const styles = StyleSheet.create({
         borderBottomColor: '#E5E7EB',
     },
     title: {
-        fontSize: 24,
         fontWeight: '700',
         color: '#1A1A2E',
-    },
-    addBtn: {
-        backgroundColor: '#5B8DEF',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 8,
-    },
-    addBtnText: {
-        color: '#fff',
-        fontWeight: '600',
-        fontSize: 14,
     },
     empty: {
         flex: 1,
@@ -101,12 +96,9 @@ const styles = StyleSheet.create({
         padding: 40,
     },
     emptyTitle: {
-        fontSize: 18,
-        fontWeight: '600',
         color: '#374151',
     },
     emptyHint: {
-        fontSize: 14,
         color: '#9CA3AF',
         marginTop: 6,
         textAlign: 'center',

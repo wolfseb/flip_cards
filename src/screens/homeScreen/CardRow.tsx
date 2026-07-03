@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Avatar, Button, Card as PaperCard, Text } from 'react-native-paper';
+
 import { Card } from '../../types';
 
 const LEVEL_COLORS = ['#9E9E9E', '#2196F3', '#4CAF50', '#FF9800', '#9C27B0'];
@@ -12,30 +14,42 @@ interface Props {
 
 const CardRow = ({ item, onEditCard, onDeleteCard }: Props) => {
     return (
-        <View style={styles.cardRow}>
-            <View style={[styles.levelBadge, { backgroundColor: LEVEL_COLORS[item.level - 1] }]}>
-                <Text style={styles.levelBadgeText}>L{item.level}</Text>
-                <Text style={styles.levelBadgeName}>{LEVEL_NAMES[item.level - 1]}</Text>
-            </View>
+        <PaperCard style={styles.cardRow} mode="elevated">
+            <PaperCard.Content style={styles.content}>
+                <View style={styles.levelBadge}>
+                    <Avatar.Text
+                        size={44}
+                        label={`L${item.level}`}
+                        labelStyle={styles.levelBadgeText}
+                        style={{ backgroundColor: LEVEL_COLORS[item.level - 1] }}
+                    />
+                    <Text style={styles.levelBadgeName}>{LEVEL_NAMES[item.level - 1]}</Text>
+                </View>
 
-            <View style={styles.cardTexts}>
-                <Text style={styles.cardFront} numberOfLines={1}>
-                    {item.front}
-                </Text>
-                <Text style={styles.cardBack} numberOfLines={1}>
-                    {item.back}
-                </Text>
-            </View>
+                <View style={styles.cardTexts}>
+                    <Text style={styles.cardFront} numberOfLines={1}>
+                        {item.front}
+                    </Text>
+                    <Text style={styles.cardBack} numberOfLines={1}>
+                        {item.back}
+                    </Text>
+                </View>
 
-            <View style={styles.rowActions}>
-                <Pressable style={styles.editBtn} onPress={() => onEditCard(item.id)}>
-                    <Text style={styles.editBtnText}>Edit</Text>
-                </Pressable>
-                <Pressable style={styles.deleteBtn} onPress={() => onDeleteCard(item.id)}>
-                    <Text style={styles.deleteBtnText}>✕</Text>
-                </Pressable>
-            </View>
-        </View>
+                <View style={styles.rowActions}>
+                    <Button compact mode="contained-tonal" onPress={() => onEditCard(item.id)}>
+                        Edit
+                    </Button>
+                    <Button
+                        compact
+                        mode="contained-tonal"
+                        textColor="#EF4444"
+                        onPress={() => onDeleteCard(item.id)}
+                    >
+                        ✕
+                    </Button>
+                </View>
+            </PaperCard.Content>
+        </PaperCard>
     );
 };
 
@@ -43,35 +57,26 @@ export default CardRow;
 
 const styles = StyleSheet.create({
     cardRow: {
+        marginBottom: 8,
+        borderRadius: 12,
+    },
+    content: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 12,
-        marginBottom: 8,
-        boxShadow: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 3,
-        elevation: 1,
     },
     levelBadge: {
-        width: 44,
-        height: 44,
-        borderRadius: 10,
         alignItems: 'center',
-        justifyContent: 'center',
         marginRight: 12,
     },
     levelBadgeText: {
-        color: '#fff',
         fontSize: 12,
         fontWeight: '700',
     },
     levelBadgeName: {
-        color: 'rgba(255,255,255,0.8)',
+        color: '#6B7280',
         fontSize: 9,
         fontWeight: '500',
+        marginTop: 2,
     },
     cardTexts: {
         flex: 1,
@@ -89,27 +94,5 @@ const styles = StyleSheet.create({
     rowActions: {
         flexDirection: 'row',
         gap: 6,
-    },
-    editBtn: {
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        borderRadius: 7,
-        backgroundColor: '#EEF2FF',
-    },
-    editBtnText: {
-        fontSize: 13,
-        color: '#5B8DEF',
-        fontWeight: '500',
-    },
-    deleteBtn: {
-        paddingHorizontal: 9,
-        paddingVertical: 6,
-        borderRadius: 7,
-        backgroundColor: '#FEE2E2',
-    },
-    deleteBtnText: {
-        fontSize: 13,
-        color: '#EF4444',
-        fontWeight: '500',
     },
 });

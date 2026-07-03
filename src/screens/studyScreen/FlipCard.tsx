@@ -1,5 +1,6 @@
 import React, { JSX, useEffect, useRef, useState } from 'react';
-import { Animated, Pressable, StyleSheet, Text } from 'react-native';
+import { Animated, Pressable, StyleSheet } from 'react-native';
+import { Text } from 'react-native-paper';
 
 interface Props {
     front: string;
@@ -41,7 +42,13 @@ const CardFace = ({
     );
 };
 
-const FlipCard = ({ front, back, flipped: forceFlipped, onFlip, tintColor }: Props): JSX.Element => {
+const FlipCard = ({
+    front,
+    back,
+    flipped: forceFlipped,
+    onFlip,
+    tintColor,
+}: Props): JSX.Element => {
     const [flipped, setFlipped] = useState(false);
     const anim = useRef(new Animated.Value(0)).current;
 

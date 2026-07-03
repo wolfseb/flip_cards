@@ -1,11 +1,12 @@
 import { JSX, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Button, Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import FlipCard from './FlipCard';
-import { StudyCard, Quality, Card } from '../../types';
-import DoneScreen from './DoneScreen';
 import { useCards } from '../../CardsContext';
+import { Card, Quality, StudyCard } from '../../types';
+import DoneScreen from './DoneScreen';
+import FlipCard from './FlipCard';
 import { applyReview, shuffleCards, toCard } from './sm2';
 
 const INCORRECT_COLOR = '#EF444433';
@@ -88,10 +89,10 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Pressable onPress={handleDone}>
-                    <Text style={styles.backLink}>← Back</Text>
-                </Pressable>
-                <Text style={styles.progress}>
+                <Button mode="text" onPress={handleDone} textColor="#5B8DEF">
+                    ← Back
+                </Button>
+                <Text variant="bodyMedium" style={styles.progress}>
                     {index + 1} / {currentCards.length}
                 </Text>
             </View>
@@ -106,18 +107,18 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
                         tintColor={tintColor}
                     />
                     {checked && (
-                        <Pressable style={styles.nextBtn} onPress={handleNext}>
-                            <Text style={styles.nextBtnText}>Next →</Text>
-                        </Pressable>
+                        <Button mode="contained" onPress={handleNext} style={styles.nextBtn}>
+                            Next →
+                        </Button>
                     )}
                 </View>
                 <View style={styles.textInputArea}>
                     <TextInput
+                        mode="outlined"
                         style={styles.answerInput}
                         value={answer}
                         onChangeText={setAnswer}
                         placeholder="Type your answer…"
-                        placeholderTextColor="#9CA3AF"
                         multiline
                         textAlignVertical="top"
                         editable={!checked}
@@ -127,13 +128,14 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
                             }
                         }}
                     />
-                    <Pressable
-                        style={[styles.checkBtn, checked && styles.checkBtnDisabled]}
+                    <Button
+                        mode="contained"
                         onPress={onCheck}
                         disabled={checked}
+                        style={styles.checkBtn}
                     >
-                        <Text style={styles.checkBtnText}>Enter</Text>
-                    </Pressable>
+                        Enter
+                    </Button>
                 </View>
             </View>
         </SafeAreaView>
@@ -154,13 +156,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 16,
     },
-    backLink: {
-        fontSize: 16,
-        color: '#5B8DEF',
-        fontWeight: '500',
-    },
     progress: {
-        fontSize: 15,
         color: '#6B7280',
         fontWeight: '500',
     },
@@ -177,15 +173,8 @@ const styles = StyleSheet.create({
         gap: 16,
     },
     nextBtn: {
-        backgroundColor: '#5B8DEF',
-        paddingHorizontal: 20,
-        paddingVertical: 14,
         borderRadius: 12,
-    },
-    nextBtnText: {
-        color: '#fff',
-        fontWeight: '600',
-        fontSize: 15,
+        justifyContent: 'center',
     },
     textInputArea: {
         flex: 1,
@@ -198,30 +187,12 @@ const styles = StyleSheet.create({
         width: 400,
         marginTop: 16,
         minHeight: 80,
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 14,
-        fontSize: 16,
-        color: '#1A1A2E',
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
     },
     checkBtn: {
         marginTop: 16,
         marginLeft: 12,
         minHeight: 80,
-        backgroundColor: '#5B8DEF',
-        paddingHorizontal: 24,
         borderRadius: 12,
-        alignItems: 'center',
         justifyContent: 'center',
-    },
-    checkBtnDisabled: {
-        backgroundColor: '#A9BEEA',
-    },
-    checkBtnText: {
-        color: '#fff',
-        fontWeight: '600',
-        fontSize: 15,
     },
 });

@@ -8,10 +8,10 @@ import {
     useState,
 } from 'react';
 
-import { loadCards, saveCards } from './storage';
-import { Card, StudyCard } from './types';
 import { isDue, shuffleCards, toStudyCard } from './screens/studyScreen/sm2';
 import { sortCards, SortKey, SortState } from './sort';
+import { loadCards, saveCards } from './storage';
+import { Card, StudyCard } from './types';
 
 interface CardsContextValue {
     cards: Card[];
