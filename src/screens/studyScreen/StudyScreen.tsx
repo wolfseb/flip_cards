@@ -8,6 +8,7 @@ import { Card, Quality, StudyCard } from '../../types';
 import DoneScreen from './DoneScreen';
 import FlipCard from './FlipCard';
 import { applyReview, shuffleCards, toCard } from './sm2';
+import Header from './Header';
 
 const INCORRECT_COLOR = '#EF444433';
 
@@ -88,15 +89,7 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Button mode="text" onPress={handleDone} textColor="#5B8DEF">
-                    ← Back
-                </Button>
-                <Text variant="bodyMedium" style={styles.progress}>
-                    {index + 1} / {currentCards.length}
-                </Text>
-            </View>
-
+            <Header index={index} total={currentCards.length} handleDone={handleDone} />
             <View style={styles.studyArea}>
                 <View style={styles.cardRow}>
                     <FlipCard

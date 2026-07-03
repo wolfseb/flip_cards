@@ -16,8 +16,7 @@ interface Props {
 }
 
 const HomeScreen = ({ onStudy, onAddCard, onEditCard }: Props): JSX.Element => {
-    const { cards, sorted, getDueCards, queueStudyCards, persist } = useCards();
-    const dueCount = getDueCards().length;
+    const { cards, sorted, persist } = useCards();
 
     const onDeleteCard = (id: string) => {
         Alert.alert('Delete card', 'This card will be permanently removed.', [
