@@ -1,5 +1,5 @@
 import { JSX } from 'react';
-import { Alert, FlatList, StyleSheet, View } from 'react-native';
+import { Alert, FlatList, Platform, StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -18,8 +18,17 @@ interface Props {
 const HomeScreen = ({ onStudy, onAddCard, onEditCard }: Props): JSX.Element => {
     const { cards, sorted, persist } = useCards();
 
-    const onDeleteCard = (id: string) => {
-        Alert.alert('Delete card', 'This card will be permanently removed.', [
+    const onDeleteCard = (id: string): void => {
+        const message = 'This card will be permanently removed.';
+
+        if (Platform.OS === 'web') {
+            if (window.confirm(`Delete card\n\n${message}`)) {
+                persist(cards.filter(c => c.id !== id));
+            }
+            return;
+        }
+
+        Alert.alert('Delete card', message, [
             { text: 'Cancel', style: 'cancel' },
             {
                 text: 'Delete',
