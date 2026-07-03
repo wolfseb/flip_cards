@@ -18,6 +18,8 @@ interface CardsContextValue {
     sorted: Card[];
     sortState: SortState;
     sortBy: (sortKey: SortKey) => void;
+    searchTerm: string;
+    setSearchTerm: (term: string) => void;
     getDueCards: () => Card[];
     studyCards: StudyCard[];
     queueStudyCards: (cards: Card[]) => void;
@@ -29,6 +31,8 @@ const CardsContext = createContext<CardsContextValue>({
     sorted: [],
     sortState: {},
     sortBy: () => {},
+    searchTerm: '',
+    setSearchTerm: () => {},
     getDueCards: () => [],
     studyCards: [],
     queueStudyCards: () => {},
@@ -38,6 +42,7 @@ const CardsContext = createContext<CardsContextValue>({
 export const CardsContextProvider = ({ children }: { children: ReactNode }): ReactElement => {
     const [cards, setCards] = useState<Card[]>([]);
     const [sortState, setSortState] = useState<SortState>({});
+    const [searchTerm, setSearchTerm] = useState('');
     const [studyCards, setStudyCards] = useState<StudyCard[]>([]);
 
     useEffect(() => {
@@ -51,10 +56,15 @@ export const CardsContextProvider = ({ children }: { children: ReactNode }): Rea
         saveCards(updated);
     };
 
-    const sorted = useMemo(
-        () => sortCards(cards, sortState.key, sortState.asc),
-        [cards, sortState.key, sortState.asc],
-    );
+    const sorted = useMemo(() => {
+        const term = searchTerm.trim().toLowerCase();
+        const filtered = term
+            ? cards.filter(
+                  c => c.front.toLowerCase().includes(term) || c.back.toLowerCase().includes(term),
+              )
+            : cards;
+        return sortCards(filtered, sortState.key, sortState.asc);
+    }, [cards, sortState.key, sortState.asc, searchTerm]);
 
     const getDueCards = (): Card[] => cards.filter(isDue);
 
@@ -83,6 +93,8 @@ export const CardsContextProvider = ({ children }: { children: ReactNode }): Rea
                 sorted,
                 sortState,
                 sortBy,
+                searchTerm,
+                setSearchTerm,
                 getDueCards,
                 studyCards,
                 queueStudyCards,
