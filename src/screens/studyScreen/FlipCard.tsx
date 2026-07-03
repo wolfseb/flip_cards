@@ -1,5 +1,5 @@
 import React, { JSX, useEffect, useRef, useState } from 'react';
-import { Animated, Pressable, StyleSheet } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
 interface Props {
@@ -37,7 +37,6 @@ const CardFace = ({
         >
             <Text style={styles.sideLabel}>{isFront ? 'Front' : 'Back'}</Text>
             <Text style={styles.cardText}>{children}</Text>
-            <Text style={styles.bottomLabel}>Tap card to flip</Text>
         </Animated.View>
     );
 };
@@ -70,14 +69,14 @@ const FlipCard = ({
     }, [forceFlipped]);
 
     return (
-        <Pressable style={styles.container} onPress={() => flip(!flipped)}>
+        <View style={styles.container}>
             <CardFace anim={anim} isFront tintColor={tintColor}>
                 <div>{front}</div>
             </CardFace>
             <CardFace anim={anim} tintColor={tintColor}>
                 <div>{back}</div>
             </CardFace>
-        </Pressable>
+        </View>
     );
 };
 
@@ -85,9 +84,9 @@ export default FlipCard;
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
+        width: 400,
+        maxWidth: '100%',
         height: 240,
-        maxWidth: 400,
     },
     face: {
         position: 'absolute',
@@ -117,16 +116,6 @@ const styles = StyleSheet.create({
         top: 14,
         left: 18,
         fontSize: 11,
-        fontWeight: '700',
-        color: '#9CA3AF',
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-    },
-    bottomLabel: {
-        position: 'absolute',
-        bottom: 14,
-        fontSize: 11,
-        textAlign: 'center',
         fontWeight: '700',
         color: '#9CA3AF',
         textTransform: 'uppercase',

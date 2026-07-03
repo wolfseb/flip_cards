@@ -1,14 +1,14 @@
 import { JSX, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCards } from '../../CardsContext';
 import { Card, Quality, StudyCard } from '../../types';
 import DoneScreen from './DoneScreen';
 import FlipCard from './FlipCard';
-import { applyReview, shuffleCards, toCard } from './sm2';
 import Header from './Header';
+import { applyReview, shuffleCards, toCard } from './sm2';
+import { Button, TextInput } from 'react-native-paper';
 
 const INCORRECT_COLOR = '#EF444433';
 
@@ -91,20 +91,13 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
         <SafeAreaView style={styles.container}>
             <Header index={index} total={currentCards.length} handleDone={handleDone} />
             <View style={styles.studyArea}>
-                <View style={styles.cardRow}>
-                    <FlipCard
-                        key={current.id}
-                        front={current.front}
-                        back={current.back}
-                        flipped={checked}
-                        tintColor={tintColor}
-                    />
-                    {checked && (
-                        <Button mode="contained" onPress={handleNext} style={styles.nextBtn}>
-                            Next →
-                        </Button>
-                    )}
-                </View>
+                <FlipCard
+                    key={current.id}
+                    front={current.front}
+                    back={current.back}
+                    flipped={checked}
+                    tintColor={tintColor}
+                />
                 <View style={styles.textInputArea}>
                     <TextInput
                         mode="outlined"
@@ -123,11 +116,10 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
                     />
                     <Button
                         mode="contained"
-                        onPress={onCheck}
-                        disabled={checked}
+                        onPress={checked ? handleNext : onCheck}
                         style={styles.checkBtn}
                     >
-                        Enter
+                        {checked ? 'Next' : 'Enter'}
                     </Button>
                 </View>
             </View>
@@ -142,35 +134,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F6FA',
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-    },
-    progress: {
-        color: '#6B7280',
-        fontWeight: '500',
-    },
     studyArea: {
         flex: 1,
         flexDirection: 'column',
         paddingHorizontal: 20,
-        justifyContent: 'space-around',
-        alignItems: 'center',
-    },
-    cardRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 16,
-    },
-    nextBtn: {
-        borderRadius: 12,
         justifyContent: 'center',
+        alignItems: 'center',
+        gap: 64,
     },
     textInputArea: {
-        flex: 1,
         flexDirection: 'row',
         paddingHorizontal: 20,
         justifyContent: 'center',
@@ -185,7 +157,7 @@ const styles = StyleSheet.create({
         marginTop: 16,
         marginLeft: 12,
         minHeight: 80,
-        borderRadius: 12,
+        borderRadius: 4,
         justifyContent: 'center',
     },
 });

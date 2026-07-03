@@ -1,6 +1,7 @@
 import FontAwesomeFreeSolid from '@react-native-vector-icons/fontawesome-free-solid';
+import { JSX } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Chip, Text } from 'react-native-paper';
+import { Chip, Text } from 'react-native-paper';
 
 interface Props {
     index: number;
@@ -8,7 +9,7 @@ interface Props {
     handleDone: () => void;
 }
 
-const Header = ({ handleDone, index, total }: Props) => {
+const Header = ({ handleDone, index, total }: Props): JSX.Element => {
     return (
         <View style={styles.header}>
             <Chip
