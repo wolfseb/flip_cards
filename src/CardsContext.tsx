@@ -23,6 +23,8 @@ interface CardsContextValue {
     getDueCards: () => Card[];
     studyCards: StudyCard[];
     queueStudyCards: (cards: Card[]) => void;
+    isInverted: boolean;
+    setIsInverted: (val: boolean) => void;
     persist: (update: Card[]) => void;
 }
 
@@ -36,6 +38,8 @@ const CardsContext = createContext<CardsContextValue>({
     getDueCards: () => [],
     studyCards: [],
     queueStudyCards: () => {},
+    isInverted: false,
+    setIsInverted: () => {},
     persist: () => {},
 });
 
@@ -44,6 +48,7 @@ export const CardsContextProvider = ({ children }: { children: ReactNode }): Rea
     const [sortState, setSortState] = useState<SortState>({});
     const [searchTerm, setSearchTerm] = useState('');
     const [studyCards, setStudyCards] = useState<StudyCard[]>([]);
+    const [isInverted, setIsInverted] = useState(false);
 
     useEffect(() => {
         loadCards().then(loaded => {
@@ -98,6 +103,8 @@ export const CardsContextProvider = ({ children }: { children: ReactNode }): Rea
                 getDueCards,
                 studyCards,
                 queueStudyCards,
+                isInverted,
+                setIsInverted,
                 persist,
             }}
         >

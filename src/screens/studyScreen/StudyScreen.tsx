@@ -1,6 +1,6 @@
 import { JSX, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { Button, Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCards } from '../../CardsContext';
@@ -26,7 +26,7 @@ interface Props {
 }
 
 const StudyScreen = ({ onDone }: Props): JSX.Element => {
-    const { cards, studyCards, persist } = useCards();
+    const { cards, studyCards, isInverted, persist } = useCards();
 
     const [currentCards, setCurrentCards] = useState<StudyCard[]>(studyCards);
     const [index, setIndex] = useState(0);
@@ -60,6 +60,8 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
     }
 
     const current = currentCards[index];
+    const solution = isInverted ? current.front : current.back;
+    const question = isInverted ? current.back : current.front;
 
     const handleNext = (): void => {
         setAnswer('');
@@ -71,7 +73,7 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
     const onCheck = (): void => {
         if (checked) return;
 
-        const correct = current.back.trim() === answer.trim();
+        const correct = solution.trim() === answer.trim();
         const updated: StudyCard = correct
             ? applyReview(current)
             : { ...current, quality: Math.max(current.quality - 1, 0) as Quality };
@@ -99,35 +101,34 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
             <View style={styles.studyArea}>
                 <FlipCard
                     key={current.id}
-                    front={current.front}
-                    back={current.back}
+                    front={question}
+                    back={solution}
                     flipped={checked}
                     tintColor={tintColor}
+                    flippable={checked}
                 />
-                <View style={styles.textInputArea}>
-                    <TextInput
-                        mode="outlined"
-                        style={styles.answerInput}
-                        value={answer}
-                        onChangeText={setAnswer}
-                        placeholder="Type your answer…"
-                        multiline
-                        textAlignVertical="top"
-                        editable={!checked}
-                        onKeyPress={({ nativeEvent }) => {
-                            if (nativeEvent.key === 'Enter') {
-                                onCheck();
-                            }
-                        }}
-                    />
-                    <Button
-                        mode="contained"
-                        onPress={checked ? handleNext : onCheck}
-                        style={styles.checkBtn}
-                    >
-                        {checked ? 'Next' : 'Enter'}
-                    </Button>
-                </View>
+                <TextInput
+                    mode="outlined"
+                    style={styles.answerInput}
+                    value={answer}
+                    onChangeText={setAnswer}
+                    placeholder="Type your answer…"
+                    multiline
+                    textAlignVertical="top"
+                    editable={!checked}
+                    onKeyPress={({ nativeEvent }) => {
+                        if (nativeEvent.key === 'Enter') {
+                            onCheck();
+                        }
+                    }}
+                />
+                <Button
+                    mode="contained"
+                    onPress={checked ? handleNext : onCheck}
+                    style={styles.checkBtn}
+                >
+                    {checked ? 'Next' : 'Enter'}
+                </Button>
             </View>
         </SafeAreaView>
     );
@@ -144,9 +145,9 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         paddingHorizontal: 20,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        gap: 64,
+        gap: 16,
     },
     textInputArea: {
         flexDirection: 'row',
@@ -156,14 +157,12 @@ const styles = StyleSheet.create({
     },
     answerInput: {
         width: 400,
-        marginTop: 16,
         minHeight: 80,
     },
     checkBtn: {
-        marginTop: 16,
-        marginLeft: 12,
-        minHeight: 80,
+        minHeight: 64,
         borderRadius: 4,
+        width: 400,
         justifyContent: 'center',
     },
 });

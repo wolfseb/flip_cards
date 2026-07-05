@@ -1,14 +1,6 @@
 import React, { JSX, useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
-
-interface Props {
-    front: string;
-    back: string;
-    flipped?: boolean;
-    onFlip?: (flipped: boolean) => void;
-    tintColor?: string;
-}
 
 const CardFace = ({
     anim,
@@ -41,12 +33,22 @@ const CardFace = ({
     );
 };
 
+interface Props {
+    front: string;
+    back: string;
+    flipped?: boolean;
+    onFlip?: (flipped: boolean) => void;
+    tintColor?: string;
+    flippable?: boolean;
+}
+
 const FlipCard = ({
     front,
     back,
     flipped: forceFlipped,
     onFlip,
     tintColor,
+    flippable,
 }: Props): JSX.Element => {
     const [flipped, setFlipped] = useState(false);
     const anim = useRef(new Animated.Value(0)).current;
@@ -69,14 +71,14 @@ const FlipCard = ({
     }, [forceFlipped]);
 
     return (
-        <View style={styles.container}>
+        <Pressable style={styles.container} onPress={flippable ? () => flip(!flipped) : () => {}}>
             <CardFace anim={anim} isFront tintColor={tintColor}>
                 <div>{front}</div>
             </CardFace>
             <CardFace anim={anim} tintColor={tintColor}>
                 <div>{back}</div>
             </CardFace>
-        </View>
+        </Pressable>
     );
 };
 
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
     container: {
         width: 400,
         maxWidth: '100%',
-        height: 240,
+        height: 120,
     },
     face: {
         position: 'absolute',

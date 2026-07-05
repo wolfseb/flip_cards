@@ -7,7 +7,7 @@ import { useCards } from '../../CardsContext';
 import CardRow from './CardRow';
 import { SortButtonRow } from './SortButtonRow';
 import StatsRow from './StatsRow';
-import StudyRow from './StudyRow';
+import StudySettings from './StudySettings';
 
 interface Props {
     onStudy: () => void;
@@ -50,7 +50,7 @@ const HomeScreen = ({ onStudy, onAddCard, onEditCard }: Props): JSX.Element => {
             </View>
 
             <StatsRow />
-            <StudyRow onStudy={onStudy} />
+            <StudySettings onStudy={onStudy} />
             <SortButtonRow />
 
             {cards.length === 0 ? (
