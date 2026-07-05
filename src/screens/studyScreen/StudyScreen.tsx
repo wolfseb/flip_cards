@@ -116,11 +116,6 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
                     multiline
                     textAlignVertical="top"
                     editable={!checked}
-                    onKeyPress={({ nativeEvent }) => {
-                        if (nativeEvent.key === 'Enter') {
-                            onCheck();
-                        }
-                    }}
                 />
                 <Button
                     mode="contained"
