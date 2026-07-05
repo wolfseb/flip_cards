@@ -42,3 +42,8 @@ yarn-error.*
 
 # vscode settings
 .vscode
+
+# claude stuff
+.claude
+CLAUDE.md
+AGENTS.md
