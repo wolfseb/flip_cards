@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     searchbar: {
-        flexBasis: '20%',
+        flexBasis: '100%',
         elevation: 0,
         marginTop: 12,
     },

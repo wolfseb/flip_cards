@@ -3,9 +3,8 @@ import { Card } from './types';
 export const SORT_MAP = {
     front: 'Front',
     back: 'Back',
-    nextReview: 'Next Review Date',
     level: 'Level',
-    createdAt: 'Created At',
+    nextReview: 'Due',
 } as const;
 
 export type SortKey = keyof typeof SORT_MAP;
@@ -22,7 +21,7 @@ const comparators: Record<SortKey, (a: Card, b: Card) => number> = {
     back: (a, b) => a.back.localeCompare(b.back),
     nextReview: (a, b) => new Date(a.nextReview).getTime() - new Date(b.nextReview).getTime(),
     level: (a, b) => a.level - b.level,
-    createdAt: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    // createdAt: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
 };
 
 export const sortCards = (

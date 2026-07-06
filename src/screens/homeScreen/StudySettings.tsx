@@ -1,7 +1,7 @@
 import Slider from '@react-native-community/slider';
 import { JSX, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, RadioButton, Switch, Text, TextInput } from 'react-native-paper';
+import { Button, Switch, Text, TextInput } from 'react-native-paper';
 
 import { useCards } from '../../CardsContext';
 import { sortCards } from '../../sort';
@@ -35,7 +35,7 @@ const StudySettings = ({ onStudy }: Props): JSX.Element => {
     return (
         <View style={styles.studyArea}>
             <View style={styles.studySettingsArea}>
-                <View style={styles.studyCardsSlider}>
+                <View style={styles.sliderRow}>
                     <Slider
                         style={styles.slider}
                         minimumValue={MIN_STUDY_COUNT}
@@ -45,6 +45,8 @@ const StudySettings = ({ onStudy }: Props): JSX.Element => {
                         onValueChange={updateStudyCount}
                         minimumTrackTintColor="#5B8DEF"
                         maximumTrackTintColor="#E5E7EB"
+                        thumbSize={20}
+                        thumbTintColor="#5B8DEF"
                     />
                     <TextInput
                         mode="outlined"
@@ -56,14 +58,14 @@ const StudySettings = ({ onStudy }: Props): JSX.Element => {
                         onEndEditing={() => updateStudyCount(Number(studyCount) || MIN_STUDY_COUNT)}
                     />
                 </View>
-                <View style={styles.studyCardsSlider}>
+                <View style={styles.switchRow}>
                     <Switch value={isInverted} onValueChange={() => setIsInverted(!isInverted)} />
-                    <Text>Reverse study direction</Text>
+                    <Text style={styles.switchLabel}>Reverse study direction</Text>
                 </View>
+                <Button mode="contained" onPress={handleStudy} style={styles.studyBtn}>
+                    Study
+                </Button>
             </View>
-            <Button mode="contained" onPress={handleStudy} style={styles.studyBtn}>
-                Study
-            </Button>
         </View>
     );
 };
@@ -72,37 +74,36 @@ export default StudySettings;
 
 const styles = StyleSheet.create({
     studyArea: {
-        flexDirection: 'row',
-        justifyContent: 'center',
         marginTop: 16,
+        marginHorizontal: 20,
     },
     studySettingsArea: {
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        marginHorizontal: 20,
-        marginVertical: 16,
-        gap: 16,
+        gap: 20,
     },
-    studyCardsSlider: {
-        flex: 1,
+    sliderRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        marginHorizontal: 20,
         gap: 12,
     },
     slider: {
-        width: 200,
+        flex: 1,
     },
     studyCountInput: {
         width: 64,
-        height: 32,
+        height: 40,
         textAlign: 'center',
+    },
+    switchRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    switchLabel: {
+        flexShrink: 1,
     },
     studyBtn: {
         borderRadius: 12,
         justifyContent: 'center',
-        flexBasis: 100,
+        alignSelf: 'stretch',
     },
 });
