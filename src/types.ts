@@ -4,6 +4,8 @@ export interface Card {
     id: string;
     front: string;
     back: string;
+    frontComment: string;
+    backComment: string;
     // SM-2 fields
     interval: number; // days until next review
     repetitions: number; // consecutive correct answers

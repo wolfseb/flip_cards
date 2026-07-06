@@ -62,6 +62,8 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
     const current = currentCards[index];
     const solution = isInverted ? current.front : current.back;
     const question = isInverted ? current.back : current.front;
+    const solutionComment = isInverted ? current.frontComment : current.backComment;
+    const questionComment = isInverted ? current.backComment : current.frontComment;
 
     const handleNext = (): void => {
         setAnswer('');
@@ -103,6 +105,8 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
                     key={current.id}
                     front={question}
                     back={solution}
+                    frontComment={questionComment}
+                    backComment={solutionComment}
                     flipped={checked}
                     tintColor={tintColor}
                     flippable={checked}
@@ -144,20 +148,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 16,
     },
-    textInputArea: {
-        flexDirection: 'row',
-        paddingHorizontal: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     answerInput: {
-        width: 400,
+        alignSelf: 'stretch',
+        paddingTop: 8,
         minHeight: 80,
     },
     checkBtn: {
         minHeight: 64,
         borderRadius: 4,
-        width: 400,
+        alignSelf: 'stretch',
         justifyContent: 'center',
     },
 });

@@ -28,7 +28,7 @@ const CardFace = ({
             ]}
         >
             <Text style={styles.sideLabel}>{isFront ? 'Front' : 'Back'}</Text>
-            <Text style={styles.cardText}>{children}</Text>
+            {children}
         </Animated.View>
     );
 };
@@ -36,6 +36,8 @@ const CardFace = ({
 interface Props {
     front: string;
     back: string;
+    frontComment: string;
+    backComment: string;
     flipped?: boolean;
     onFlip?: (flipped: boolean) => void;
     tintColor?: string;
@@ -45,6 +47,8 @@ interface Props {
 const FlipCard = ({
     front,
     back,
+    frontComment,
+    backComment,
     flipped: forceFlipped,
     onFlip,
     tintColor,
@@ -73,10 +77,16 @@ const FlipCard = ({
     return (
         <Pressable style={styles.container} onPress={flippable ? () => flip(!flipped) : () => {}}>
             <CardFace anim={anim} isFront tintColor={tintColor}>
-                <div>{front}</div>
+                <>
+                    <Text style={styles.cardText}>{front}</Text>
+                    <Text style={styles.cardComment}>{frontComment}</Text>
+                </>
             </CardFace>
             <CardFace anim={anim} tintColor={tintColor}>
-                <div>{back}</div>
+                <>
+                    <Text style={styles.cardText}>{back}</Text>
+                    <Text style={styles.cardComment}>{backComment}</Text>
+                </>
             </CardFace>
         </Pressable>
     );
@@ -129,5 +139,12 @@ const styles = StyleSheet.create({
         color: '#1A1A2E',
         textAlign: 'center',
         lineHeight: 32,
+    },
+    cardComment: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#4A4A5E',
+        textAlign: 'center',
+        lineHeight: 20,
     },
 });

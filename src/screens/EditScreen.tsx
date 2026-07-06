@@ -1,5 +1,5 @@
 import { JSX, useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -17,20 +17,28 @@ const EditScreen = ({ screen, card, onReturn }: Props): JSX.Element => {
 
     const [front, setFront] = useState(card?.front ?? '');
     const [back, setBack] = useState(card?.back ?? '');
+    const [frontComment, setFrontComment] = useState(card?.frontComment ?? '');
+    const [backComment, setBackComment] = useState(card?.backComment ?? '');
 
     const canSave = front.trim().length > 0 && back.trim().length > 0;
 
-    const onSave = (front: string, back: string) => {
+    const onSave = (front: string, frontComment: string, back: string, backComment: string) => {
         if (screen.name !== 'edit') return;
 
         if (screen.cardId) {
-            persist(cards.map(c => (c.id === screen.cardId ? { ...c, front, back } : c)));
+            persist(
+                cards.map(c =>
+                    c.id === screen.cardId ? { ...c, front, frontComment, back, backComment } : c,
+                ),
+            );
         } else {
             const now = new Date().toISOString();
             const newCard: Card = {
                 id: Date.now().toString(),
                 front,
                 back,
+                frontComment,
+                backComment,
                 interval: 0,
                 repetitions: 0,
                 easeFactor: 2.5,
@@ -54,39 +62,66 @@ const EditScreen = ({ screen, card, onReturn }: Props): JSX.Element => {
                 </Text>
                 <Button
                     mode="text"
-                    onPress={() => canSave && onSave(front.trim(), back.trim())}
+                    onPress={() =>
+                        canSave &&
+                        onSave(front.trim(), frontComment.trim(), back.trim(), backComment.trim())
+                    }
                     disabled={!canSave}
                 >
                     Save
                 </Button>
             </View>
 
-            <KeyboardAvoidingView
-                style={styles.body}
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            >
-                <TextInput
-                    mode="outlined"
-                    label="Front"
-                    style={styles.input}
-                    value={front}
-                    onChangeText={setFront}
-                    placeholder="Enter front side text…"
-                    multiline
-                    autoFocus
-                    textAlignVertical="top"
-                />
+            <KeyboardAvoidingView style={styles.body} behavior={'padding'}>
+                <ScrollView
+                    contentContainerStyle={styles.bodyContent}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <TextInput
+                        mode="outlined"
+                        label="Front"
+                        style={styles.input}
+                        value={front}
+                        onChangeText={setFront}
+                        placeholder="Enter front side text…"
+                        multiline
+                        autoFocus
+                        textAlignVertical="top"
+                    />
 
-                <TextInput
-                    mode="outlined"
-                    label="Back"
-                    style={styles.input}
-                    value={back}
-                    onChangeText={setBack}
-                    placeholder="Enter back side text…"
-                    multiline
-                    textAlignVertical="top"
-                />
+                    <TextInput
+                        mode="outlined"
+                        label="Front Comment"
+                        style={styles.input}
+                        value={frontComment}
+                        onChangeText={setFrontComment}
+                        placeholder="Enter front side comment…"
+                        multiline
+                        textAlignVertical="top"
+                    />
+
+                    <TextInput
+                        mode="outlined"
+                        label="Back"
+                        style={styles.input}
+                        value={back}
+                        onChangeText={setBack}
+                        placeholder="Enter back side text…"
+                        multiline
+                        textAlignVertical="top"
+                    />
+
+                    <TextInput
+                        mode="outlined"
+                        label="Back Comment"
+                        style={styles.input}
+                        value={backComment}
+                        onChangeText={setBackComment}
+                        placeholder="Enter back side comment…"
+                        multiline
+                        textAlignVertical="top"
+                    />
+                </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
@@ -115,6 +150,8 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 1,
+    },
+    bodyContent: {
         padding: 20,
         gap: 14,
     },
