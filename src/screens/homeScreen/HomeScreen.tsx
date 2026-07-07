@@ -1,4 +1,4 @@
-import { JSX } from 'react';
+import { JSX, useState } from 'react';
 import { Alert, FlatList, Platform, StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,7 +7,7 @@ import { useCards } from '../../CardsContext';
 import CardRow from './CardRow';
 import { SortButtonRow } from './SortButtonRow';
 import StatsRow from './StatsRow';
-import StudySettings from './StudySettings';
+import StudyModal from './StudyModal';
 
 interface Props {
     onStudy: () => void;
@@ -17,6 +17,10 @@ interface Props {
 
 const HomeScreen = ({ onStudy, onAddCard, onEditCard }: Props): JSX.Element => {
     const { cards, sorted, persist } = useCards();
+
+    const [isVisible, setIsVisible] = useState(false);
+    const showStudyModal = () => setIsVisible(true);
+    const hideStudyModal = () => setIsVisible(false);
 
     const onDeleteCard = (id: string): void => {
         const message = 'This card will be permanently removed.';
@@ -50,7 +54,10 @@ const HomeScreen = ({ onStudy, onAddCard, onEditCard }: Props): JSX.Element => {
             </View>
 
             <StatsRow />
-            <StudySettings onStudy={onStudy} />
+            <Button mode="contained" onPress={showStudyModal}>
+                Study
+            </Button>
+            {/* <StudySettings onStudy={onStudy} /> */}
             <SortButtonRow />
 
             {cards.length === 0 ? (
@@ -72,6 +79,7 @@ const HomeScreen = ({ onStudy, onAddCard, onEditCard }: Props): JSX.Element => {
                     )}
                 />
             )}
+            <StudyModal visible={isVisible} hideModal={hideStudyModal} handleStudy={onStudy} />
         </SafeAreaView>
     );
 };

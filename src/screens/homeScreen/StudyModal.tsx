@@ -1,10 +1,8 @@
 import Slider from '@react-native-community/slider';
 import { JSX, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Switch, Text, TextInput } from 'react-native-paper';
-
+import { Button, Modal, Switch, Text, TextInput } from 'react-native-paper';
 import { useCards } from '../../CardsContext';
-import { sortCards } from '../../sort';
 
 const MIN_STUDY_COUNT = 1;
 const MAX_STUDY_COUNT = 20;
@@ -13,11 +11,13 @@ const clamp = (count: number): number =>
     Math.min(Math.max(count, MIN_STUDY_COUNT), MAX_STUDY_COUNT);
 
 interface Props {
-    onStudy: () => void;
+    visible: boolean;
+    hideModal: () => void;
+    handleStudy: () => void;
 }
 
-const StudySettings = ({ onStudy }: Props): JSX.Element => {
-    const { cards, getDueCards, queueStudyCards, isInverted, setIsInverted } = useCards();
+const StudyModal = ({ visible, hideModal, handleStudy }: Props): JSX.Element => {
+    const { cards, getDueCards, isInverted, setIsInverted, queueStudyCards } = useCards();
 
     const defaultStudyCount = clamp(getDueCards().length);
     const [studyCount, setStudyCount] = useState(defaultStudyCount);
@@ -26,14 +26,8 @@ const StudySettings = ({ onStudy }: Props): JSX.Element => {
         setStudyCount(clamp(count));
     };
 
-    const handleStudy = () => {
-        const cardsToStudy = sortCards(cards, 'nextReview', true).slice(0, studyCount);
-        queueStudyCards(cardsToStudy);
-        onStudy();
-    };
-
     return (
-        <View style={styles.studyArea}>
+        <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
             <View style={styles.studySettingsArea}>
                 <View style={styles.sliderRow}>
                     <Slider
@@ -60,19 +54,33 @@ const StudySettings = ({ onStudy }: Props): JSX.Element => {
                 </View>
                 <View style={styles.switchRow}>
                     <Switch value={isInverted} onValueChange={() => setIsInverted(!isInverted)} />
-                    <Text style={styles.switchLabel}>Reverse study direction</Text>
+                    <Text style={styles.switchLabel}>Inverted (answer is front side)</Text>
                 </View>
-                <Button mode="contained" onPress={handleStudy} style={styles.studyBtn}>
-                    Study
-                </Button>
+                <View style={styles.buttonRow}>
+                    <Button mode="outlined" onPress={hideModal} style={styles.cancelBtn}>
+                        Cancel
+                    </Button>
+                    <Button mode="contained" onPress={handleStudy} style={styles.studyBtn}>
+                        Start
+                    </Button>
+                </View>
             </View>
-        </View>
+        </Modal>
     );
 };
 
-export default StudySettings;
+export default StudyModal;
 
 const styles = StyleSheet.create({
+    modalContent: {
+        backgroundColor: '#fff',
+        borderRadius: 16,
+        padding: 24,
+        marginHorizontal: 20,
+        maxWidth: 420,
+        alignSelf: 'center',
+        width: '100%',
+    },
     studyArea: {
         marginTop: 16,
         marginHorizontal: 20,
@@ -100,6 +108,16 @@ const styles = StyleSheet.create({
     },
     switchLabel: {
         flexShrink: 1,
+    },
+    buttonRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    cancelBtn: {
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignSelf: 'stretch',
     },
     studyBtn: {
         borderRadius: 12,
