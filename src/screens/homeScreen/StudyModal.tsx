@@ -1,8 +1,11 @@
 import Slider from '@react-native-community/slider';
-import { JSX, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Modal, Switch, Text, TextInput } from 'react-native-paper';
+import { Button, Menu, Modal, Switch, Text, TextInput } from 'react-native-paper';
 import { useCards } from '../../CardsContext';
+import SelectLessonMenu from './SelectLessonMenu';
+import { Lesson } from '../../types';
+import { sortCards } from '../../sort';
 
 const MIN_STUDY_COUNT = 1;
 const MAX_STUDY_COUNT = 20;
@@ -13,27 +16,55 @@ const clamp = (count: number): number =>
 interface Props {
     visible: boolean;
     hideModal: () => void;
-    handleStudy: () => void;
+    onStudy: () => void;
 }
 
-const StudyModal = ({ visible, hideModal, handleStudy }: Props): JSX.Element => {
-    const { cards, getDueCards, isInverted, setIsInverted, queueStudyCards } = useCards();
+const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
+    const { lessons, getCards, getDueCards, isInverted, setIsInverted, queueStudyCards } =
+        useCards();
 
-    const defaultStudyCount = clamp(getDueCards().length);
-    const [studyCount, setStudyCount] = useState(defaultStudyCount);
+    const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(undefined);
+    const [isMenuVisible, setIsMenuVisible] = useState(false);
+    const showMenu = () => setIsMenuVisible(true);
+    const hideMenu = () => setIsMenuVisible(false);
 
+    const [studyCount, setStudyCount] = useState(1);
     const updateStudyCount = (count: number): void => {
         setStudyCount(clamp(count));
+    };
+    const onSelectLesson = (lesson: Lesson): void => {
+        setSelectedLesson(lesson);
+        updateStudyCount(getDueCards(lesson.id).length);
+    };
+
+    const handleStudy = (): void => {
+        if (!selectedLesson) return;
+
+        const cards = getCards(selectedLesson?.id);
+        const cardsToStudy = sortCards(cards, 'nextReview', true).slice(0, studyCount);
+        queueStudyCards(cardsToStudy);
+        onStudy();
     };
 
     return (
         <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
             <View style={styles.studySettingsArea}>
+                <SelectLessonMenu
+                    isVisible={isMenuVisible}
+                    showMenu={showMenu}
+                    hideMenu={hideMenu}
+                    lessons={lessons}
+                    selectedLesson={selectedLesson}
+                    setSelectedLesson={onSelectLesson}
+                />
                 <View style={styles.sliderRow}>
                     <Slider
                         style={styles.slider}
                         minimumValue={MIN_STUDY_COUNT}
-                        maximumValue={Math.min(MAX_STUDY_COUNT, cards.length)}
+                        maximumValue={Math.min(
+                            MAX_STUDY_COUNT,
+                            selectedLesson?.cards?.length ?? MIN_STUDY_COUNT,
+                        )}
                         step={1}
                         value={studyCount}
                         onValueChange={updateStudyCount}
@@ -111,7 +142,7 @@ const styles = StyleSheet.create({
     },
     buttonRow: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'stretch',
         gap: 8,
     },
     cancelBtn: {

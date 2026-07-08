@@ -4,30 +4,33 @@ import { Button, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCards } from '../../CardsContext';
-import CardRow from './CardRow';
-import { SortButtonRow } from './SortButtonRow';
-import StatsRow from './StatsRow';
+import LessonRow from './LessonRow';
 import StudyModal from './StudyModal';
+import EditLessonModal from './EditLessonModal';
 
 interface Props {
     onStudy: () => void;
-    onAddCard: () => void;
-    onEditCard: (id: string) => void;
+    onEditLesson: (id: string) => void;
 }
 
-const HomeScreen = ({ onStudy, onAddCard, onEditCard }: Props): JSX.Element => {
-    const { cards, sorted, persist } = useCards();
+const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
+    const { lessons, persist } = useCards();
 
-    const [isVisible, setIsVisible] = useState(false);
-    const showStudyModal = () => setIsVisible(true);
-    const hideStudyModal = () => setIsVisible(false);
+    const [isStudyModalVisible, setIsStudyModalVisible] = useState(false);
+    const showStudyModal = () => setIsStudyModalVisible(true);
+    const hideStudyModal = () => setIsStudyModalVisible(false);
 
-    const onDeleteCard = (id: string): void => {
+    const [isLessonModalVisible, setIsLessonModalVisible] = useState(false);
+    const showLessonModal = () => setIsLessonModalVisible(true);
+    const hideLessonModal = () => setIsLessonModalVisible(false);
+
+    const onDeleteLesson = (id: string): void => {
         const message = 'This card will be permanently removed.';
+        const onPersist = () => persist(lessons.filter(l => l.id !== id));
 
         if (Platform.OS === 'web') {
             if (window.confirm(`Delete card\n\n${message}`)) {
-                persist(cards.filter(c => c.id !== id));
+                onPersist();
             }
             return;
         }
@@ -37,7 +40,7 @@ const HomeScreen = ({ onStudy, onAddCard, onEditCard }: Props): JSX.Element => {
             {
                 text: 'Delete',
                 style: 'destructive',
-                onPress: () => persist(cards.filter(c => c.id !== id)),
+                onPress: onPersist,
             },
         ]);
     };
@@ -48,38 +51,46 @@ const HomeScreen = ({ onStudy, onAddCard, onEditCard }: Props): JSX.Element => {
                 <Text variant="headlineSmall" style={styles.title}>
                     FlipCards
                 </Text>
-                <Button mode="contained" onPress={onAddCard} compact>
-                    + Add
+                <Button mode="contained" onPress={showLessonModal} compact>
+                    + Add Lesson
                 </Button>
             </View>
 
-            <StatsRow />
             <Button mode="contained" onPress={showStudyModal}>
                 Study
             </Button>
-            {/* <StudySettings onStudy={onStudy} /> */}
-            <SortButtonRow />
 
-            {cards.length === 0 ? (
+            {lessons.length === 0 ? (
                 <View style={styles.empty}>
                     <Text variant="titleMedium" style={styles.emptyTitle}>
-                        No cards yet
+                        No lessons yet
                     </Text>
                     <Text variant="bodyMedium" style={styles.emptyHint}>
-                        Tap "+ Add" to create your first card.
+                        Tap "+ Add" to create your first lesson.
                     </Text>
                 </View>
             ) : (
                 <FlatList
-                    data={sorted}
+                    data={lessons}
                     keyExtractor={item => item.id}
                     contentContainerStyle={styles.list}
                     renderItem={({ item }) => (
-                        <CardRow item={item} onEditCard={onEditCard} onDeleteCard={onDeleteCard} />
+                        <LessonRow
+                            item={item}
+                            onEditLesson={onEditLesson}
+                            onDeleteLesson={onDeleteLesson}
+                        />
                     )}
                 />
             )}
-            <StudyModal visible={isVisible} hideModal={hideStudyModal} handleStudy={onStudy} />
+            {lessons.length > 0 && (
+                <StudyModal
+                    visible={isStudyModalVisible}
+                    hideModal={hideStudyModal}
+                    onStudy={onStudy}
+                />
+            )}
+            <EditLessonModal isVisible={isLessonModalVisible} hideModal={hideLessonModal} />
         </SafeAreaView>
     );
 };

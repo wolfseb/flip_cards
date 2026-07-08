@@ -1,4 +1,3 @@
-import FontAwesomeFreeSolid from '@react-native-vector-icons/fontawesome-free-solid';
 import { JSX } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Chip, Text } from 'react-native-paper';
@@ -12,10 +11,7 @@ interface Props {
 const Header = ({ handleDone, index, total }: Props): JSX.Element => {
     return (
         <View style={styles.header}>
-            <Chip
-                onPress={handleDone}
-                icon={() => <FontAwesomeFreeSolid name={'arrow-left'} size={16} color={'#888'} />}
-            >
+            <Chip onPress={handleDone} icon="arrow-left">
                 Back
             </Chip>
             <Text variant="bodyMedium" style={styles.progress}>

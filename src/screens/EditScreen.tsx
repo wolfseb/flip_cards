@@ -1,19 +1,20 @@
 import { JSX, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCards } from '../CardsContext';
-import { Card, Screen } from '../types';
+import { Card, Lesson, Screen } from '../types';
 
 interface Props {
     screen: Screen;
     card?: Card; // undefined = new card
+    lesson: Lesson;
     onReturn: () => void;
 }
 
-const EditScreen = ({ screen, card, onReturn }: Props): JSX.Element => {
-    const { cards, persist } = useCards();
+const EditScreen = ({ screen, lesson, card, onReturn }: Props): JSX.Element => {
+    const { persistLesson } = useCards();
 
     const [front, setFront] = useState(card?.front ?? '');
     const [back, setBack] = useState(card?.back ?? '');
@@ -26,15 +27,17 @@ const EditScreen = ({ screen, card, onReturn }: Props): JSX.Element => {
         if (screen.name !== 'edit') return;
 
         if (screen.cardId) {
-            persist(
-                cards.map(c =>
+            persistLesson({
+                ...lesson,
+                cards: lesson.cards.map(c =>
                     c.id === screen.cardId ? { ...c, front, frontComment, back, backComment } : c,
                 ),
-            );
+            });
         } else {
             const now = new Date().toISOString();
             const newCard: Card = {
                 id: Date.now().toString(),
+                lessonId: lesson.id,
                 front,
                 back,
                 frontComment,
@@ -46,7 +49,10 @@ const EditScreen = ({ screen, card, onReturn }: Props): JSX.Element => {
                 level: 1,
                 createdAt: now,
             };
-            persist([...cards, newCard]);
+            persistLesson({
+                ...lesson,
+                cards: [...lesson.cards, newCard],
+            });
         }
         onReturn();
     };
@@ -54,7 +60,7 @@ const EditScreen = ({ screen, card, onReturn }: Props): JSX.Element => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Button mode="text" onPress={onReturn} textColor="#6B7280">
+                <Button mode="text" onPress={() => onReturn()} textColor="#6B7280">
                     Cancel
                 </Button>
                 <Text variant="titleMedium" style={styles.title}>
@@ -91,22 +97,22 @@ const EditScreen = ({ screen, card, onReturn }: Props): JSX.Element => {
 
                     <TextInput
                         mode="outlined"
-                        label="Front Comment"
+                        label="Back"
                         style={styles.input}
-                        value={frontComment}
-                        onChangeText={setFrontComment}
-                        placeholder="Enter front side comment…"
+                        value={back}
+                        onChangeText={setBack}
+                        placeholder="Enter back side text…"
                         multiline
                         textAlignVertical="top"
                     />
 
                     <TextInput
                         mode="outlined"
-                        label="Back"
+                        label="Front Comment"
                         style={styles.input}
-                        value={back}
-                        onChangeText={setBack}
-                        placeholder="Enter back side text…"
+                        value={frontComment}
+                        onChangeText={setFrontComment}
+                        placeholder="Enter front side comment…"
                         multiline
                         textAlignVertical="top"
                     />

@@ -1,18 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Card } from './types';
+import { Lesson } from './types';
 
 const KEY = 'flipcards_data';
 
-export const loadCards = async (): Promise<Card[]> => {
+export const loadData = async (): Promise<Lesson[]> => {
     try {
         const raw = await AsyncStorage.getItem(KEY);
-        return raw ? (JSON.parse(raw) as Card[]) : [];
+        return raw ? (JSON.parse(raw) as Lesson[]) : [];
     } catch {
         return [];
     }
 };
 
-export const saveCards = async (cards: Card[]): Promise<void> => {
-    await AsyncStorage.setItem(KEY, JSON.stringify(cards));
+export const saveData = async (lessons: Lesson[]): Promise<void> => {
+    await AsyncStorage.setItem(KEY, JSON.stringify(lessons));
 };

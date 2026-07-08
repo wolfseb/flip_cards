@@ -2,76 +2,95 @@ import {
     createContext,
     ReactElement,
     ReactNode,
+    useCallback,
     useContext,
     useEffect,
-    useMemo,
     useState,
 } from 'react';
 
 import { isDue, shuffleCards, toStudyCard } from './screens/studyScreen/sm2';
 import { sortCards, SortKey, SortState } from './sort';
-import { loadCards, saveCards } from './storage';
-import { Card, StudyCard } from './types';
+import { loadData, saveData } from './storage';
+import { Card, Lesson, StudyCard } from './types';
 
 interface CardsContextValue {
-    cards: Card[];
-    sorted: Card[];
+    lessons: Lesson[];
+    getCards: (lessonId: string) => Card[];
+    getSorted: (lessonId: string) => Card[];
     sortState: SortState;
     sortBy: (sortKey: SortKey) => void;
     searchTerm: string;
     setSearchTerm: (term: string) => void;
-    getDueCards: () => Card[];
+    getDueCards: (lessonId: string) => Card[];
+    getAllDueCards: () => Card[];
     studyCards: StudyCard[];
     queueStudyCards: (cards: Card[]) => void;
     isInverted: boolean;
     setIsInverted: (val: boolean) => void;
-    persist: (update: Card[]) => void;
+    persist: (update: Lesson[]) => void;
+    persistLesson: (update: Lesson) => void;
 }
 
 const CardsContext = createContext<CardsContextValue>({
-    cards: [],
-    sorted: [],
+    lessons: [],
+    getCards: () => [],
+    getSorted: () => [],
     sortState: {},
     sortBy: () => {},
     searchTerm: '',
     setSearchTerm: () => {},
     getDueCards: () => [],
+    getAllDueCards: () => [],
     studyCards: [],
     queueStudyCards: () => {},
     isInverted: false,
     setIsInverted: () => {},
     persist: () => {},
+    persistLesson: () => {},
 });
 
 export const CardsContextProvider = ({ children }: { children: ReactNode }): ReactElement => {
-    const [cards, setCards] = useState<Card[]>([]);
+    const [lessons, setLessons] = useState<Lesson[]>([]);
+    // const [cards, setCards] = useState<Card[]>([]);
     const [sortState, setSortState] = useState<SortState>({});
     const [searchTerm, setSearchTerm] = useState('');
     const [studyCards, setStudyCards] = useState<StudyCard[]>([]);
     const [isInverted, setIsInverted] = useState(false);
 
     useEffect(() => {
-        loadCards().then(loaded => {
-            setCards(loaded);
+        loadData().then(loaded => {
+            setLessons(loaded);
         });
     }, []);
 
-    const persist = (updated: Card[]): void => {
-        setCards(updated);
-        saveCards(updated);
+    const persist = (updated: Lesson[]): void => {
+        setLessons(updated);
+        saveData(updated);
     };
 
-    const sorted = useMemo(() => {
-        const term = searchTerm.trim().toLowerCase();
-        const filtered = term
-            ? cards.filter(
-                  c => c.front.toLowerCase().includes(term) || c.back.toLowerCase().includes(term),
-              )
-            : cards;
-        return sortCards(filtered, sortState.key, sortState.asc);
-    }, [cards, sortState.key, sortState.asc, searchTerm]);
+    const persistLesson = (updated: Lesson): void => {
+        persist(lessons.map(l => (l.id === updated.id ? updated : l)));
+    };
 
-    const getDueCards = (): Card[] => cards.filter(isDue);
+    const getCards = (lessonId: string) => lessons.find(l => l.id === lessonId)?.cards ?? [];
+
+    const getSorted = useCallback(
+        (lessonId: string) => {
+            const term = searchTerm.trim().toLowerCase();
+            const filtered = term
+                ? getCards(lessonId).filter(
+                      c =>
+                          c.front.toLowerCase().includes(term) ||
+                          c.back.toLowerCase().includes(term),
+                  )
+                : getCards(lessonId);
+            return sortCards(filtered ?? [], sortState.key, sortState.asc);
+        },
+        [lessons, sortState.key, sortState.asc, searchTerm],
+    );
+
+    const getAllDueCards = (): Card[] => lessons.flatMap(l => l.cards).filter(isDue);
+    const getDueCards = (lessonId: string): Card[] => getCards(lessonId).filter(isDue) ?? [];
 
     const sortBy = (sortKey: SortKey): void => {
         if (sortKey === sortState.key) {
@@ -94,18 +113,21 @@ export const CardsContextProvider = ({ children }: { children: ReactNode }): Rea
     return (
         <CardsContext.Provider
             value={{
-                cards,
-                sorted,
+                lessons,
+                getCards,
+                getSorted,
                 sortState,
                 sortBy,
                 searchTerm,
                 setSearchTerm,
                 getDueCards,
+                getAllDueCards,
                 studyCards,
                 queueStudyCards,
                 isInverted,
                 setIsInverted,
                 persist,
+                persistLesson,
             }}
         >
             {children}

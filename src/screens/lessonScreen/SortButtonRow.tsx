@@ -1,4 +1,3 @@
-import FontAwesomeFreeSolid from '@react-native-vector-icons/fontawesome-free-solid';
 import { JSX, useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 import { Card, Chip, Searchbar } from 'react-native-paper';
@@ -11,15 +10,7 @@ export const SortButtonRow = (): JSX.Element => {
 
     const sortChevron = useCallback(
         (sortKey: SortKey) =>
-            sortState.key === sortKey
-                ? () => (
-                      <FontAwesomeFreeSolid
-                          name={sortState.asc ? 'chevron-up' : 'chevron-down'}
-                          size={16}
-                          color={'#888'}
-                      />
-                  )
-                : undefined,
+            sortState.key === sortKey ? (sortState.asc ? 'chevron-up' : 'chevron-down') : undefined,
         [sortState.key, sortState.asc],
     );
 
@@ -43,12 +34,8 @@ export const SortButtonRow = (): JSX.Element => {
                     value={searchTerm}
                     onChangeText={setSearchTerm}
                     style={styles.searchbar}
-                    icon={({ size, color }) => (
-                        <FontAwesomeFreeSolid name="magnifying-glass" size={size} color={color} />
-                    )}
-                    clearIcon={({ size, color }) => (
-                        <FontAwesomeFreeSolid name="xmark" size={size} color={color} />
-                    )}
+                    icon="magnify"
+                    clearIcon="close"
                 />
             </Card.Content>
         </Card>

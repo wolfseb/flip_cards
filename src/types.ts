@@ -1,7 +1,14 @@
 export type Quality = 0 | 1 | 2 | 3 | 4 | 5;
 
+export interface Lesson {
+    id: string;
+    name: string;
+    cards: Card[];
+}
+
 export interface Card {
     id: string;
+    lessonId: string;
     front: string;
     back: string;
     frontComment: string;
@@ -20,4 +27,8 @@ export interface StudyCard extends Card {
     isDone: boolean;
 }
 
-export type Screen = { name: 'home' } | { name: 'study' } | { name: 'edit'; cardId?: string };
+export type Screen =
+    | { name: 'home' }
+    | { name: 'study' }
+    | { name: 'lesson'; lessonId: string }
+    | { name: 'edit'; lessonId: string; cardId?: string };

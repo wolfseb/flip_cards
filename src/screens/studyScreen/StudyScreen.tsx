@@ -1,6 +1,6 @@
 import { JSX, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Text, TextInput } from 'react-native-paper';
+import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCards } from '../../CardsContext';
@@ -26,7 +26,7 @@ interface Props {
 }
 
 const StudyScreen = ({ onDone }: Props): JSX.Element => {
-    const { cards, studyCards, isInverted, persist } = useCards();
+    const { lessons, studyCards, isInverted, persist } = useCards();
 
     const [currentCards, setCurrentCards] = useState<StudyCard[]>(studyCards);
     const [index, setIndex] = useState(0);
@@ -40,9 +40,18 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
     useEffect(() => {
         if (currentCards.length === 0 || index < currentCards.length) return;
 
-        const doneById = new Map(getDoneCards().map(c => [c.id, c]));
-        persist(cards.map(c => doneById.get(c.id) ?? c));
+        const doneCards = getDoneCards();
+        lessons.map(lesson => {
+            const doneByLesson = doneCards.filter(c => c.lessonId === lesson.id);
+            if (doneByLesson.length === 0) return lesson;
 
+            const doneById = new Map(doneByLesson.map(c => [c.id, c]));
+            return {
+                ...lesson,
+                cards: lesson.cards.map(c => doneById.get(c.id) ?? c),
+            };
+        });
+        persist(lessons);
         setCurrentCards(shuffleCards(getRestCards()));
         setIndex(0);
     }, [index, currentCards]);
@@ -85,12 +94,6 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
         setChecked(true);
     };
 
-    const handleDone = (): void => {
-        const doneById = new Map(getDoneCards().map(c => [c.id, c]));
-        persist(cards.map(c => doneById.get(c.id) ?? c));
-        onDone();
-    };
-
     const tintColor = checked
         ? isCorrect
             ? CORRECT_QUALITY_COLORS[current.quality]
@@ -99,7 +102,7 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Header index={index} total={currentCards.length} handleDone={handleDone} />
+            <Header index={index} total={currentCards.length} handleDone={onDone} />
             <View style={styles.studyArea}>
                 <FlipCard
                     key={current.id}

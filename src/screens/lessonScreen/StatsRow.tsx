@@ -3,10 +3,16 @@ import { StyleSheet, View } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 
 import { useCards } from '../../CardsContext';
+import { Lesson } from '../../types';
 
-const StatsRow = (): JSX.Element => {
-    const { cards, getDueCards } = useCards();
-    const dueCount = getDueCards().length;
+interface Props {
+    lesson: Lesson;
+}
+
+const StatsRow = ({ lesson }: Props): JSX.Element => {
+    const { getCards, getDueCards } = useCards();
+    const dueCount = getDueCards(lesson.id).length;
+    const cards = getCards(lesson.id);
 
     return (
         <Card style={styles.statsRow} mode="elevated">
