@@ -29,7 +29,7 @@ const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
     );
 
     return (
-        <PaperCard style={styles.cardRow} mode="elevated">
+        <PaperCard style={styles.cardRow} mode="elevated" onPress={() => onEditLesson(item.id)}>
             <PaperCard.Content style={styles.content}>
                 <View style={styles.levelBadge}>
                     <Avatar.Text
@@ -52,7 +52,7 @@ const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
                 )}
 
                 <View style={styles.rowActions}>
-                    <IconButton icon={'pencil'} onPress={() => onEditLesson(item.id)} />
+                    {/* <IconButton icon={'pencil'} onPress={() => onEditLesson(item.id)} /> */}
                     <IconButton
                         icon={'delete'}
                         onPress={() => onDeleteLesson(item.id)}
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
         color: '#1A1A2E',
+        marginRight: 12,
     },
     rowActions: {
         flexDirection: 'row',
