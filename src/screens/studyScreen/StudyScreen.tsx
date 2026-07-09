@@ -41,7 +41,7 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
         if (currentCards.length === 0 || index < currentCards.length) return;
 
         const doneCards = getDoneCards();
-        lessons.map(lesson => {
+        const newLessons = lessons.map(lesson => {
             const doneByLesson = doneCards.filter(c => c.lessonId === lesson.id);
             if (doneByLesson.length === 0) return lesson;
 
@@ -51,7 +51,7 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
                 cards: lesson.cards.map(c => doneById.get(c.id) ?? c),
             };
         });
-        persist(lessons);
+        persist(newLessons);
         setCurrentCards(shuffleCards(getRestCards()));
         setIndex(0);
     }, [index, currentCards]);
