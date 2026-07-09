@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import { Avatar, Button, Card as PaperCard, Text } from 'react-native-paper';
+import { Avatar, Button, IconButton, Card as PaperCard, Text } from 'react-native-paper';
 
 import { Lesson } from '../../types';
 import { useMemo } from 'react';
@@ -33,7 +33,7 @@ const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
             <PaperCard.Content style={styles.content}>
                 <View style={styles.levelBadge}>
                     <Avatar.Text
-                        size={44}
+                        size={32}
                         label={`L${minLevel}`}
                         labelStyle={styles.levelBadgeText}
                         style={{ backgroundColor: LEVEL_COLORS[minLevel - 1] }}
@@ -41,28 +41,23 @@ const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
                     <Text style={styles.levelBadgeName}>{LEVEL_NAMES[minLevel - 1]}</Text>
                 </View>
 
-                <Text style={styles.cardFront} numberOfLines={1}>
+                <Text style={styles.text} numberOfLines={1}>
                     {item.name}
                 </Text>
 
                 {item.cards && item.cards.length > 0 && (
-                    <Text style={styles.cardFront} numberOfLines={1}>
-                        {dueCards / item.cards.length + ' due'}
+                    <Text style={styles.text} numberOfLines={1}>
+                        {dueCards + '/' + item.cards.length + ' due'}
                     </Text>
                 )}
 
                 <View style={styles.rowActions}>
-                    <Button compact mode="contained-tonal" onPress={() => onEditLesson(item.id)}>
-                        Edit
-                    </Button>
-                    <Button
-                        compact
-                        mode="contained-tonal"
-                        textColor="#EF4444"
+                    <IconButton icon={'pencil'} onPress={() => onEditLesson(item.id)} />
+                    <IconButton
+                        icon={'delete'}
                         onPress={() => onDeleteLesson(item.id)}
-                    >
-                        ✕
-                    </Button>
+                        iconColor="#EF4444"
+                    />
                 </View>
             </PaperCard.Content>
         </PaperCard>
@@ -79,10 +74,10 @@ const styles = StyleSheet.create({
     content: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
     },
     levelBadge: {
         alignItems: 'center',
-        marginRight: 12,
     },
     levelBadgeText: {
         fontSize: 12,
@@ -94,18 +89,13 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         marginTop: 2,
     },
-    cardFront: {
+    text: {
         fontSize: 14,
         fontWeight: '600',
         color: '#1A1A2E',
     },
-    cardBack: {
-        fontSize: 13,
-        color: '#6B7280',
-        marginTop: 2,
-    },
     rowActions: {
         flexDirection: 'row',
-        gap: 6,
+        marginLeft: 8,
     },
 });

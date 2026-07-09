@@ -1,7 +1,7 @@
 import { JSX, useState } from 'react';
 import { Alert, FlatList, Platform, StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Appbar, Button, FAB, Text } from 'react-native-paper';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useCards } from '../../CardsContext';
 import LessonRow from './LessonRow';
@@ -15,6 +15,7 @@ interface Props {
 
 const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
     const { lessons, persist } = useCards();
+    const insets = useSafeAreaInsets();
 
     const [isStudyModalVisible, setIsStudyModalVisible] = useState(false);
     const showStudyModal = () => setIsStudyModalVisible(true);
@@ -47,16 +48,21 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text variant="headlineSmall" style={styles.title}>
-                    FlipCards
-                </Text>
-                <Button mode="contained" onPress={showLessonModal} compact>
-                    + Add Lesson
-                </Button>
-            </View>
+            <Appbar.Header statusBarHeight={0}>
+                <Appbar.Content title={'FlipCards'} />
+            </Appbar.Header>
+            <FAB
+                icon="plus"
+                style={{
+                    position: 'absolute',
+                    bottom: insets.bottom,
+                    right: insets.right,
+                    margin: 16,
+                }}
+                onPress={showLessonModal}
+            />
 
-            <Button mode="contained" onPress={showStudyModal}>
+            <Button mode="contained" onPress={showStudyModal} style={styles.studyBtn}>
                 Study
             </Button>
 
@@ -102,19 +108,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F6FA',
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        backgroundColor: '#fff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
-    },
-    title: {
-        fontWeight: '700',
-        color: '#1A1A2E',
+    studyBtn: {
+        marginTop: 16,
+        marginHorizontal: 16,
     },
     empty: {
         flex: 1,

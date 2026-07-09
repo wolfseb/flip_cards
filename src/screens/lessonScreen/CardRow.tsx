@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import { Avatar, Button, Card as PaperCard, Text } from 'react-native-paper';
+import { Avatar, Button, IconButton, Card as PaperCard, Text } from 'react-native-paper';
 
 import { Card } from '../../types';
 
@@ -18,7 +18,7 @@ const CardRow = ({ item, onEditCard, onDeleteCard }: Props) => {
             <PaperCard.Content style={styles.content}>
                 <View style={styles.levelBadge}>
                     <Avatar.Text
-                        size={44}
+                        size={32}
                         label={`L${item.level}`}
                         labelStyle={styles.levelBadgeText}
                         style={{ backgroundColor: LEVEL_COLORS[item.level - 1] }}
@@ -36,17 +36,12 @@ const CardRow = ({ item, onEditCard, onDeleteCard }: Props) => {
                 </View>
 
                 <View style={styles.rowActions}>
-                    <Button compact mode="contained-tonal" onPress={() => onEditCard(item.id)}>
-                        Edit
-                    </Button>
-                    <Button
-                        compact
-                        mode="contained-tonal"
-                        textColor="#EF4444"
+                    <IconButton icon={'pencil'} onPress={() => onEditCard(item.id)} />
+                    <IconButton
+                        icon={'delete'}
+                        iconColor={'#EF4444'}
                         onPress={() => onDeleteCard(item.id)}
-                    >
-                        ✕
-                    </Button>
+                    />
                 </View>
             </PaperCard.Content>
         </PaperCard>
@@ -63,6 +58,7 @@ const styles = StyleSheet.create({
     content: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
     },
     levelBadge: {
         alignItems: 'center',
@@ -93,6 +89,5 @@ const styles = StyleSheet.create({
     },
     rowActions: {
         flexDirection: 'row',
-        gap: 6,
     },
 });

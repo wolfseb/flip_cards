@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     menu: {
+        alignItems: 'flex-end',
         width: '100%',
         maxWidth: 372,
     },

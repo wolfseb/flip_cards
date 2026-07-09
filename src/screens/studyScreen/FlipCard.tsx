@@ -6,11 +6,13 @@ const CardFace = ({
     anim,
     isFront = false,
     tintColor,
+    showShadow,
     children,
 }: {
     anim: Animated.Value;
     isFront?: boolean;
     tintColor?: string;
+    showShadow: boolean;
     children: React.JSX.Element;
 }): JSX.Element => {
     const rotate = anim.interpolate({
@@ -23,6 +25,7 @@ const CardFace = ({
             style={[
                 styles.face,
                 isFront ? styles.front : styles.back,
+                showShadow ? styles.shadow : null,
                 tintColor ? { backgroundColor: tintColor } : null,
                 { transform: [{ perspective: 1000 }, { rotateY: rotate }] },
             ]}
@@ -55,15 +58,17 @@ const FlipCard = ({
     flippable,
 }: Props): JSX.Element => {
     const [flipped, setFlipped] = useState(false);
+    const [isFlipping, setIsFlipping] = useState(false);
     const anim = useRef(new Animated.Value(0)).current;
 
     const flip = (next: boolean): void => {
+        setIsFlipping(true);
         Animated.spring(anim, {
             toValue: next ? 1 : 0,
             friction: 8,
             tension: 40,
             useNativeDriver: true,
-        }).start();
+        }).start(() => setIsFlipping(false));
         setFlipped(next);
         onFlip?.(next);
     };
@@ -76,13 +81,13 @@ const FlipCard = ({
 
     return (
         <Pressable style={styles.container} onPress={flippable ? () => flip(!flipped) : () => {}}>
-            <CardFace anim={anim} isFront tintColor={tintColor}>
+            <CardFace anim={anim} isFront tintColor={tintColor} showShadow={!isFlipping && false}>
                 <>
                     <Text style={styles.cardText}>{front}</Text>
                     <Text style={styles.cardComment}>{frontComment}</Text>
                 </>
             </CardFace>
-            <CardFace anim={anim} tintColor={tintColor}>
+            <CardFace anim={anim} tintColor={tintColor} showShadow={!isFlipping && false}>
                 <>
                     <Text style={styles.cardText}>{back}</Text>
                     <Text style={styles.cardComment}>{backComment}</Text>
@@ -98,7 +103,15 @@ const styles = StyleSheet.create({
     container: {
         width: 400,
         maxWidth: '100%',
-        height: 120,
+        height: 180,
+    },
+    shadow: {
+        borderRadius: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
     },
     face: {
         position: 'absolute',
@@ -111,11 +124,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 24,
         backfaceVisibility: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
     },
     front: {
         backgroundColor: '#ffffff',
