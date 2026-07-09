@@ -52,7 +52,12 @@ const StatsRow = ({ lesson, onStudy }: Props): JSX.Element => {
                             Due today
                         </Text>
                     </View>
-                    <IconButton icon={'school'} onPress={onStudyDue} iconColor="#5B8DEF" />
+                    <IconButton
+                        icon={'school'}
+                        onPress={onStudyDue}
+                        iconColor={dueCount > 0 ? '#5B8DEF' : '#6B7280'}
+                        disabled={dueCount === 0}
+                    />
                 </View>
             </Card.Content>
         </Card>
