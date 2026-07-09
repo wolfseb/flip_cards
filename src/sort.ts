@@ -10,8 +10,8 @@ export const SORT_MAP = {
 export type SortKey = keyof typeof SORT_MAP;
 
 export type SortState = {
-    key?: SortKey;
-    asc?: boolean;
+    key: SortKey;
+    asc: boolean;
 };
 
 export const sortLabel = (sortKey: SortKey): string => SORT_MAP[sortKey];

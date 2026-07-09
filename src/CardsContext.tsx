@@ -18,7 +18,7 @@ interface CardsContextValue {
     getCards: (lessonId: string) => Card[];
     getSorted: (lessonId: string) => Card[];
     sortState: SortState;
-    sortBy: (sortKey: SortKey) => void;
+    sortBy: (sortKey: SortKey, asc: boolean) => void;
     searchTerm: string;
     setSearchTerm: (term: string) => void;
     getDueCards: (lessonId: string) => Card[];
@@ -35,7 +35,7 @@ const CardsContext = createContext<CardsContextValue>({
     lessons: [],
     getCards: () => [],
     getSorted: () => [],
-    sortState: {},
+    sortState: { key: 'front', asc: true },
     sortBy: () => {},
     searchTerm: '',
     setSearchTerm: () => {},
@@ -52,7 +52,7 @@ const CardsContext = createContext<CardsContextValue>({
 export const CardsContextProvider = ({ children }: { children: ReactNode }): ReactElement => {
     const [lessons, setLessons] = useState<Lesson[]>([]);
     // const [cards, setCards] = useState<Card[]>([]);
-    const [sortState, setSortState] = useState<SortState>({});
+    const [sortState, setSortState] = useState<SortState>({ key: 'front', asc: true });
     const [searchTerm, setSearchTerm] = useState('');
     const [studyCards, setStudyCards] = useState<StudyCard[]>([]);
     const [isInverted, setIsInverted] = useState(false);
@@ -84,7 +84,7 @@ export const CardsContextProvider = ({ children }: { children: ReactNode }): Rea
                           c.back.toLowerCase().includes(term),
                   )
                 : getCards(lessonId);
-            return sortCards(filtered ?? [], sortState.key, sortState.asc);
+            return sortCards(filtered, sortState.key, sortState.asc);
         },
         [lessons, sortState.key, sortState.asc, searchTerm],
     );
@@ -92,18 +92,11 @@ export const CardsContextProvider = ({ children }: { children: ReactNode }): Rea
     const getAllDueCards = (): Card[] => lessons.flatMap(l => l.cards).filter(isDue);
     const getDueCards = (lessonId: string): Card[] => getCards(lessonId).filter(isDue) ?? [];
 
-    const sortBy = (sortKey: SortKey): void => {
-        if (sortKey === sortState.key) {
-            setSortState(prev => ({
-                key: prev.key,
-                asc: !prev.asc,
-            }));
-        } else {
-            setSortState({
-                key: sortKey,
-                asc: true,
-            });
-        }
+    const sortBy = (sortKey: SortKey, asc: boolean): void => {
+        setSortState({
+            key: sortKey,
+            asc: asc,
+        });
     };
 
     const queueStudyCards = (cards: Card[]): void => {
