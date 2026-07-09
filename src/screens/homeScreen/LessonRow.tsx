@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import { Avatar, Button, IconButton, Card as PaperCard, Text } from 'react-native-paper';
+import { Avatar, IconButton, Card as PaperCard, Text } from 'react-native-paper';
 
 import { Lesson } from '../../types';
 import { useMemo } from 'react';
@@ -52,7 +52,6 @@ const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
                 )}
 
                 <View style={styles.rowActions}>
-                    {/* <IconButton icon={'pencil'} onPress={() => onEditLesson(item.id)} /> */}
                     <IconButton
                         icon={'delete'}
                         onPress={() => onDeleteLesson(item.id)}

@@ -12,7 +12,7 @@ const Header = ({ handleDone, index, total }: Props): JSX.Element => {
     return (
         <View style={styles.header}>
             <Chip onPress={handleDone} icon="arrow-left">
-                Stop Lesson
+                Abort Lesson
             </Chip>
             <Text variant="bodyMedium" style={styles.progress}>
                 {index + 1} / {total}

@@ -68,13 +68,7 @@ const LessonScreen = ({
                 <Appbar.Action icon={'pencil'} onPress={editName} />
             </Appbar.Header>
 
-            <StatsRow lesson={currentLesson} />
-            {/* <Button mode="contained" onPress={showStudyModal}>
-                Study all
-            </Button>
-            <Button mode="contained" onPress={showStudyModal}>
-                Study due
-            </Button> */}
+            <StatsRow lesson={currentLesson} onStudy={onStudy} />
             <SortButtonRow />
 
             {currentLesson.cards.length === 0 ? (
