@@ -51,16 +51,6 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
             <Appbar.Header statusBarHeight={0}>
                 <Appbar.Content title={'FlipCards'} />
             </Appbar.Header>
-            <FAB
-                icon="plus"
-                style={{
-                    position: 'absolute',
-                    bottom: insets.bottom,
-                    right: insets.right,
-                    margin: 16,
-                }}
-                onPress={showLessonModal}
-            />
 
             <Button mode="contained" onPress={showStudyModal} style={styles.studyBtn}>
                 Study
@@ -96,6 +86,16 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
                     onStudy={onStudy}
                 />
             )}
+            <FAB
+                icon="plus"
+                style={{
+                    position: 'absolute',
+                    bottom: insets.bottom,
+                    right: insets.right,
+                    margin: 16,
+                }}
+                onPress={showLessonModal}
+            />
             <EditLessonModal isVisible={isLessonModalVisible} hideModal={hideLessonModal} />
         </SafeAreaView>
     );

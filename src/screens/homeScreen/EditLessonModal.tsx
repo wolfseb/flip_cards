@@ -1,6 +1,6 @@
 import { JSX, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Button, Modal, Text, TextInput } from 'react-native-paper';
+import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import { Button, Dialog, TextInput } from 'react-native-paper';
 import { useCards } from '../../CardsContext';
 import { Lesson } from '../../types';
 
@@ -35,42 +35,47 @@ const EditLessonModal = ({ lesson, isVisible, hideModal, onSave }: Props): JSX.E
     };
 
     return (
-        <Modal
-            visible={isVisible}
-            onDismiss={hideModal}
-            contentContainerStyle={styles.modalContent}
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={StyleSheet.absoluteFill}
+            pointerEvents="box-none"
         >
-            <Text variant="titleMedium" style={styles.title}>
-                {lesson ? 'Rename Lesson' : 'New Lesson'}
-            </Text>
-            <TextInput
-                mode="outlined"
-                label="Lesson name"
-                style={styles.nameInput}
-                value={name}
-                onChangeText={setName}
-                autoFocus
-            />
-            <View style={styles.buttonRow}>
-                <Button mode="outlined" onPress={hideModal} style={styles.btn}>
-                    Cancel
-                </Button>
-                <Button
-                    mode="contained"
-                    onPress={handleSave}
-                    disabled={!name.trim()}
-                    style={styles.btn}
-                >
-                    Save
-                </Button>
-            </View>
-        </Modal>
+            <Dialog visible={isVisible} onDismiss={hideModal} style={styles.dialog}>
+                <Dialog.Title>{lesson ? 'Rename Lesson' : 'New Lesson'}</Dialog.Title>
+                <Dialog.Content>
+                    <TextInput
+                        mode="outlined"
+                        label="Lesson name"
+                        style={styles.nameInput}
+                        value={name}
+                        onChangeText={setName}
+                        autoFocus
+                    />
+                </Dialog.Content>
+                <Dialog.Actions>
+                    <Button mode="outlined" onPress={hideModal} style={styles.btn}>
+                        Cancel
+                    </Button>
+                    <Button
+                        mode="contained"
+                        onPress={handleSave}
+                        disabled={!name.trim()}
+                        style={styles.btn}
+                    >
+                        Save
+                    </Button>
+                </Dialog.Actions>
+            </Dialog>
+        </KeyboardAvoidingView>
     );
 };
 
 export default EditLessonModal;
 
 const styles = StyleSheet.create({
+    dialog: {
+        backgroundColor: '#fff',
+    },
     modalContent: {
         backgroundColor: '#fff',
         borderRadius: 16,

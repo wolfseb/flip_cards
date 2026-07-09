@@ -67,16 +67,6 @@ const LessonScreen = ({
                 <Appbar.Content title={currentLesson.name} />
                 <Appbar.Action icon={'pencil'} onPress={editName} />
             </Appbar.Header>
-            <FAB
-                icon="plus"
-                style={{
-                    position: 'absolute',
-                    bottom: insets.bottom,
-                    right: insets.right,
-                    margin: 16,
-                }}
-                onPress={handleAddCard}
-            />
 
             <StatsRow lesson={currentLesson} />
             {/* <Button mode="contained" onPress={showStudyModal}>
@@ -110,6 +100,17 @@ const LessonScreen = ({
                     )}
                 />
             )}
+
+            <FAB
+                icon="plus"
+                style={{
+                    position: 'absolute',
+                    bottom: insets.bottom,
+                    right: insets.right,
+                    margin: 16,
+                }}
+                onPress={handleAddCard}
+            />
             <EditLessonModal
                 isVisible={isEditingName}
                 hideModal={endEditingName}
