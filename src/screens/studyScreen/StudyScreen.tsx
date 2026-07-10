@@ -102,7 +102,7 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Header index={index} total={currentCards.length} handleDone={onDone} />
+            <Header index={index} total={currentCards.length} onAbort={onDone} />
             <View style={styles.studyArea}>
                 <FlipCard
                     key={current.id}

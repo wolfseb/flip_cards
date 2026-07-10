@@ -1,18 +1,46 @@
-import { StyleSheet, View } from 'react-native';
-import { Avatar, Button, IconButton, Card as PaperCard, Text } from 'react-native-paper';
+import { Alert, Platform, StyleSheet, View } from 'react-native';
+import { Avatar, IconButton, Card as PaperCard, Text } from 'react-native-paper';
 
-import { Card } from '../../types';
+import { Card, Lesson } from '../../types';
+import { useCards } from '../../CardsContext';
 
 const LEVEL_COLORS = ['#9E9E9E', '#2196F3', '#4CAF50', '#FF9800', '#9C27B0'];
 const LEVEL_NAMES = ['New', 'Learning 1', 'Learning 2', 'Expert 1', 'Expert 2'];
 
 interface Props {
     item: Card;
+    currentLesson: Lesson;
     onEditCard: (id: string) => void;
-    onDeleteCard: (id: string) => void;
 }
 
-const CardRow = ({ item, onEditCard, onDeleteCard }: Props) => {
+const CardRow = ({ item, currentLesson, onEditCard }: Props) => {
+    const { persistLesson } = useCards();
+
+    const onDeleteCard = (id: string): void => {
+        const message = 'This card will be permanently removed.';
+        const onPersist = () =>
+            persistLesson({
+                ...currentLesson,
+                cards: currentLesson.cards.filter(c => c.id !== id),
+            });
+
+        if (Platform.OS === 'web') {
+            if (window.confirm(`Delete card\n\n${message}`)) {
+                onPersist();
+            }
+            return;
+        }
+
+        Alert.alert('Delete card', message, [
+            { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'Delete',
+                style: 'destructive',
+                onPress: onPersist,
+            },
+        ]);
+    };
+
     return (
         <PaperCard style={styles.cardRow} mode="elevated">
             <PaperCard.Content style={styles.content}>

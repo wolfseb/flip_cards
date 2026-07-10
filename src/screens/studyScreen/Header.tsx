@@ -1,17 +1,34 @@
 import { JSX } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, Platform, StyleSheet, View } from 'react-native';
 import { Chip, Text } from 'react-native-paper';
 
 interface Props {
     index: number;
     total: number;
-    handleDone: () => void;
+    onAbort: () => void;
 }
 
-const Header = ({ handleDone, index, total }: Props): JSX.Element => {
+const Header = ({ onAbort, index, total }: Props): JSX.Element => {
+    const handleAbort = () => {
+        const message =
+            'Are you sure you want to abort the current study session? Your progress will not be saved.';
+
+        if (Platform.OS === 'web') {
+            if (window.confirm(`Abort session?\n\n${message}`)) {
+                onAbort();
+            }
+            return;
+        }
+
+        Alert.alert('Abort Study Session', message, [
+            { text: 'Continue Lesson', style: 'cancel' },
+            { text: 'Abort session', style: 'destructive', onPress: onAbort },
+        ]);
+    };
+
     return (
         <View style={styles.header}>
-            <Chip onPress={handleDone} icon="arrow-left">
+            <Chip onPress={handleAbort} icon="arrow-left">
                 Abort Lesson
             </Chip>
             <Text variant="bodyMedium" style={styles.progress}>

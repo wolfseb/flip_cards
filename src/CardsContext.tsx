@@ -51,7 +51,6 @@ const CardsContext = createContext<CardsContextValue>({
 
 export const CardsContextProvider = ({ children }: { children: ReactNode }): ReactElement => {
     const [lessons, setLessons] = useState<Lesson[]>([]);
-    // const [cards, setCards] = useState<Card[]>([]);
     const [sortState, setSortState] = useState<SortState>({ key: 'front', asc: true });
     const [searchTerm, setSearchTerm] = useState('');
     const [studyCards, setStudyCards] = useState<StudyCard[]>([]);

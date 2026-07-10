@@ -1,5 +1,5 @@
 import { JSX, useState } from 'react';
-import { Alert, FlatList, Platform, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { Appbar, FAB, Text } from 'react-native-paper';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -27,7 +27,7 @@ const LessonScreen = ({
     onEditCard,
     onReturn,
 }: Props): JSX.Element => {
-    const { getSorted, persistLesson } = useCards();
+    const { getSorted } = useCards();
     const insets = useSafeAreaInsets();
 
     const [isEditingName, setIsEditingName] = useState(false);
@@ -35,30 +35,6 @@ const LessonScreen = ({
     const endEditingName = () => setIsEditingName(false);
 
     const handleAddCard = () => onAddCard();
-    const onDeleteCard = (id: string): void => {
-        const message = 'This card will be permanently removed.';
-        const onPersist = () =>
-            persistLesson({
-                ...currentLesson,
-                cards: currentLesson.cards.filter(c => c.id !== id),
-            });
-
-        if (Platform.OS === 'web') {
-            if (window.confirm(`Delete card\n\n${message}`)) {
-                onPersist();
-            }
-            return;
-        }
-
-        Alert.alert('Delete card', message, [
-            { text: 'Cancel', style: 'cancel' },
-            {
-                text: 'Delete',
-                style: 'destructive',
-                onPress: onPersist,
-            },
-        ]);
-    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -89,7 +65,7 @@ const LessonScreen = ({
                         <CardRow
                             item={item}
                             onEditCard={id => onEditCard(id)}
-                            onDeleteCard={onDeleteCard}
+                            currentLesson={currentLesson}
                         />
                     )}
                 />
