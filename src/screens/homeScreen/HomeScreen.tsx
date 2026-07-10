@@ -7,6 +7,7 @@ import { useCards } from '../../CardsContext';
 import LessonRow from './LessonRow';
 import StudyModal from './StudyModal';
 import EditLessonModal from './EditLessonModal';
+import SettingsMenu from '../Settings';
 
 interface Props {
     onStudy: () => void;
@@ -50,6 +51,7 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
         <SafeAreaView style={styles.container}>
             <Appbar.Header statusBarHeight={0}>
                 <Appbar.Content title={'FlipCards'} />
+                <SettingsMenu />
             </Appbar.Header>
 
             <Button mode="contained" onPress={showStudyModal} style={styles.studyBtn}>

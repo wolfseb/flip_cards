@@ -32,3 +32,13 @@ export type Screen =
     | { name: 'study' }
     | { name: 'lesson'; lessonId: string }
     | { name: 'edit'; lessonId: string; cardId?: string };
+
+export const LANGUAGES = {
+    en: 'English',
+} as const;
+
+export type Settings = {
+    dark: boolean;
+    language: keyof typeof LANGUAGES;
+    inverted: boolean;
+};
