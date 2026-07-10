@@ -1,25 +1,19 @@
-import { JSX } from 'react';
+import { JSX, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Menu, Text } from 'react-native-paper';
 import { Lesson } from '../../types';
 
 interface Props {
-    isVisible: boolean;
-    showMenu: () => void;
-    hideMenu: () => void;
     lessons: Lesson[];
     selectedLesson: Lesson | undefined;
     setSelectedLesson: (lesson: Lesson) => void;
 }
 
-const SelectLessonMenu = ({
-    isVisible,
-    showMenu,
-    hideMenu,
-    lessons,
-    selectedLesson,
-    setSelectedLesson,
-}: Props): JSX.Element => {
+const SelectLessonMenu = ({ lessons, selectedLesson, setSelectedLesson }: Props): JSX.Element => {
+    const [isVisible, setIsVisible] = useState(false);
+    const showMenu = () => setIsVisible(true);
+    const hideMenu = () => setIsVisible(false);
+
     return (
         <View>
             <Text style={styles.dropdownLabel}>Lesson</Text>

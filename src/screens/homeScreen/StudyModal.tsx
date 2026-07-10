@@ -24,9 +24,6 @@ const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
         useCards();
 
     const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(undefined);
-    const [isMenuVisible, setIsMenuVisible] = useState(false);
-    const showMenu = () => setIsMenuVisible(true);
-    const hideMenu = () => setIsMenuVisible(false);
 
     const [studyCount, setStudyCount] = useState(1);
     const updateStudyCount = (count: number): void => {
@@ -50,9 +47,6 @@ const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
         <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
             <View style={styles.studySettingsArea}>
                 <SelectLessonMenu
-                    isVisible={isMenuVisible}
-                    showMenu={showMenu}
-                    hideMenu={hideMenu}
                     lessons={lessons}
                     selectedLesson={selectedLesson}
                     setSelectedLesson={onSelectLesson}
