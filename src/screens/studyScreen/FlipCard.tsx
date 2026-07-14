@@ -1,6 +1,7 @@
 import React, { JSX, useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { AppTheme, useAppTheme } from '../../themes';
 
 const CardFace = ({
     anim,
@@ -15,6 +16,9 @@ const CardFace = ({
     showShadow: boolean;
     children: React.JSX.Element;
 }): JSX.Element => {
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
+
     const rotate = anim.interpolate({
         inputRange: [0, 1],
         outputRange: isFront ? ['0deg', '180deg'] : ['180deg', '360deg'],
@@ -57,6 +61,9 @@ const FlipCard = ({
     tintColor,
     flippable,
 }: Props): JSX.Element => {
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
+
     const [flipped, setFlipped] = useState(false);
     const [isFlipping, setIsFlipping] = useState(false);
     const anim = useRef(new Animated.Value(0)).current;
@@ -81,13 +88,18 @@ const FlipCard = ({
 
     return (
         <Pressable style={styles.container} onPress={flippable ? () => flip(!flipped) : () => {}}>
-            <CardFace anim={anim} isFront tintColor={tintColor} showShadow={!isFlipping && false}>
+            <CardFace
+                anim={anim}
+                isFront
+                tintColor={tintColor}
+                showShadow={!isFlipping && !flipped}
+            >
                 <>
                     <Text style={styles.cardText}>{front}</Text>
                     <Text style={styles.cardComment}>{frontComment}</Text>
                 </>
             </CardFace>
-            <CardFace anim={anim} tintColor={tintColor} showShadow={!isFlipping && false}>
+            <CardFace anim={anim} tintColor={tintColor} showShadow={!isFlipping && flipped}>
                 <>
                     <Text style={styles.cardText}>{back}</Text>
                     <Text style={styles.cardComment}>{backComment}</Text>
@@ -99,60 +111,61 @@ const FlipCard = ({
 
 export default FlipCard;
 
-const styles = StyleSheet.create({
-    container: {
-        width: 400,
-        maxWidth: '100%',
-        height: 180,
-    },
-    shadow: {
-        borderRadius: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
-    },
-    face: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        borderRadius: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 24,
-        backfaceVisibility: 'hidden',
-    },
-    front: {
-        backgroundColor: '#ffffff',
-    },
-    back: {
-        backgroundColor: '#f0f4ff',
-    },
-    sideLabel: {
-        position: 'absolute',
-        top: 14,
-        left: 18,
-        fontSize: 11,
-        fontWeight: '700',
-        color: '#9CA3AF',
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-    },
-    cardText: {
-        fontSize: 22,
-        fontWeight: '500',
-        color: '#1A1A2E',
-        textAlign: 'center',
-        lineHeight: 32,
-    },
-    cardComment: {
-        fontSize: 16,
-        fontWeight: '500',
-        color: '#4A4A5E',
-        textAlign: 'center',
-        lineHeight: 20,
-    },
-});
+const createStyles = (theme: AppTheme) =>
+    StyleSheet.create({
+        container: {
+            width: 400,
+            maxWidth: '100%',
+            height: 180,
+        },
+        shadow: {
+            borderRadius: 16,
+            shadowColor: theme.colors.shadow,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 4,
+        },
+        face: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            borderRadius: 16,
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 24,
+            backfaceVisibility: 'hidden',
+        },
+        front: {
+            backgroundColor: theme.colors.surfaceVariant,
+        },
+        back: {
+            backgroundColor: theme.colors.surfaceVariant,
+        },
+        sideLabel: {
+            position: 'absolute',
+            top: 14,
+            left: 18,
+            fontSize: 11,
+            fontWeight: '700',
+            color: theme.colors.onSurfaceVariant,
+            textTransform: 'uppercase',
+            letterSpacing: 1,
+        },
+        cardText: {
+            fontSize: 22,
+            fontWeight: '500',
+            color: theme.colors.onSurface,
+            textAlign: 'center',
+            lineHeight: 32,
+        },
+        cardComment: {
+            fontSize: 16,
+            fontWeight: '500',
+            color: theme.colors.onSurfaceVariant,
+            textAlign: 'center',
+            lineHeight: 20,
+        },
+    });

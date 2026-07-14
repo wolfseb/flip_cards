@@ -40,7 +40,7 @@ const EditLessonModal = ({ lesson, isVisible, hideModal, onSave }: Props): JSX.E
             style={StyleSheet.absoluteFill}
             pointerEvents="box-none"
         >
-            <Dialog visible={isVisible} onDismiss={hideModal} style={styles.dialog}>
+            <Dialog visible={isVisible} onDismiss={hideModal}>
                 <Dialog.Title>{lesson ? 'Rename Lesson' : 'New Lesson'}</Dialog.Title>
                 <Dialog.Content>
                     <TextInput
@@ -73,22 +73,6 @@ const EditLessonModal = ({ lesson, isVisible, hideModal, onSave }: Props): JSX.E
 export default EditLessonModal;
 
 const styles = StyleSheet.create({
-    dialog: {
-        backgroundColor: '#fff',
-    },
-    modalContent: {
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 24,
-        marginHorizontal: 20,
-        maxWidth: 420,
-        alignSelf: 'center',
-        width: '100%',
-        gap: 20,
-    },
-    title: {
-        color: '#1A1A2E',
-    },
     nameInput: {
         width: '100%',
     },

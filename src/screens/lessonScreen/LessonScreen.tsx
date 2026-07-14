@@ -9,6 +9,8 @@ import StatsRow from './StatsRow';
 import { SortButtonRow } from './SortButtonRow';
 import CardRow from './CardRow';
 import EditLessonModal from '../homeScreen/EditLessonModal';
+import SettingsMenu from '../SettingsMenu';
+import { AppTheme, useAppTheme } from '../../themes';
 
 interface Props {
     screen: Screen;
@@ -29,6 +31,8 @@ const LessonScreen = ({
 }: Props): JSX.Element => {
     const { getSorted } = useCards();
     const insets = useSafeAreaInsets();
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
 
     const [isEditingName, setIsEditingName] = useState(false);
     const editName = () => setIsEditingName(true);
@@ -42,6 +46,7 @@ const LessonScreen = ({
                 <Appbar.BackAction onPress={onReturn} />
                 <Appbar.Content title={currentLesson.name} />
                 <Appbar.Action icon={'pencil'} onPress={editName} />
+                <SettingsMenu />
             </Appbar.Header>
 
             <StatsRow lesson={currentLesson} onStudy={onStudy} />
@@ -92,28 +97,29 @@ const LessonScreen = ({
 
 export default LessonScreen;
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F5F6FA',
-    },
-    addBtn: {},
-    empty: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 40,
-    },
-    emptyTitle: {
-        color: '#374151',
-    },
-    emptyHint: {
-        color: '#9CA3AF',
-        marginTop: 6,
-        textAlign: 'center',
-    },
-    list: {
-        padding: 20,
-        paddingBottom: 40,
-    },
-});
+const createStyles = (theme: AppTheme) =>
+    StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.colors.background,
+        },
+        addBtn: {},
+        empty: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 40,
+        },
+        emptyTitle: {
+            color: theme.colors.onSurface,
+        },
+        emptyHint: {
+            color: theme.colors.onSurfaceVariant,
+            marginTop: 6,
+            textAlign: 'center',
+        },
+        list: {
+            padding: 20,
+            paddingBottom: 40,
+        },
+    });

@@ -4,6 +4,7 @@ import { Card, IconButton, Text } from 'react-native-paper';
 
 import { useCards } from '../../CardsContext';
 import { Lesson } from '../../types';
+import { AppTheme, useAppTheme } from '../../themes';
 
 interface Props {
     lesson: Lesson;
@@ -12,6 +13,8 @@ interface Props {
 
 const StatsRow = ({ lesson, onStudy }: Props): JSX.Element => {
     const { getCards, getDueCards, queueStudyCards } = useCards();
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
     const cards = getCards(lesson.id);
     const dueCards = getDueCards(lesson.id);
     const dueCount = dueCards.length;
@@ -55,7 +58,7 @@ const StatsRow = ({ lesson, onStudy }: Props): JSX.Element => {
                     <IconButton
                         icon={'school'}
                         onPress={onStudyDue}
-                        iconColor={dueCount > 0 ? '#5B8DEF' : '#6B7280'}
+                        iconColor={dueCount > 0 ? theme.colors.primary : theme.colors.onSurfaceVariant}
                         disabled={dueCount === 0}
                     />
                 </View>
@@ -66,39 +69,40 @@ const StatsRow = ({ lesson, onStudy }: Props): JSX.Element => {
 
 export default StatsRow;
 
-const styles = StyleSheet.create({
-    statsRow: {
-        marginHorizontal: 20,
-        marginTop: 16,
-        borderRadius: 14,
-    },
-    content: {
-        flexDirection: 'row',
-    },
-    statBox: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row',
-    },
-    statBoxText: {
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    statDivider: {
-        width: 1,
-        backgroundColor: '#E5E7EB',
-    },
-    statNumber: {
-        fontWeight: '700',
-        color: '#1A1A2E',
-    },
-    statLabel: {
-        color: '#6B7280',
-        marginTop: 2,
-    },
-    dueHighlight: {
-        color: '#5B8DEF',
-    },
-});
+const createStyles = (theme: AppTheme) =>
+    StyleSheet.create({
+        statsRow: {
+            marginHorizontal: 20,
+            marginTop: 16,
+            borderRadius: 14,
+        },
+        content: {
+            flexDirection: 'row',
+        },
+        statBox: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'row',
+        },
+        statBoxText: {
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        statDivider: {
+            width: 1,
+            backgroundColor: theme.colors.outlineVariant,
+        },
+        statNumber: {
+            fontWeight: '700',
+            color: theme.colors.onSurface,
+        },
+        statLabel: {
+            color: theme.colors.onSurfaceVariant,
+            marginTop: 2,
+        },
+        dueHighlight: {
+            color: theme.colors.primary,
+        },
+    });

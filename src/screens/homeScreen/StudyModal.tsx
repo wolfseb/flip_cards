@@ -1,14 +1,16 @@
 import Slider from '@react-native-community/slider';
 import { JSX, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Menu, Modal, Switch, Text, TextInput } from 'react-native-paper';
+import { Button, Dialog, Modal, Switch, Text, TextInput } from 'react-native-paper';
 import { useCards } from '../../CardsContext';
 import SelectLessonMenu from './SelectLessonMenu';
 import { Lesson } from '../../types';
 import { sortCards } from '../../sort';
+import { useSettings } from '../../settings/SettingsContext';
+import { AppTheme, useAppTheme } from '../../themes';
 
 const MIN_STUDY_COUNT = 1;
-const MAX_STUDY_COUNT = 20;
+const MAX_STUDY_COUNT = 40;
 
 const clamp = (count: number): number =>
     Math.min(Math.max(count, MIN_STUDY_COUNT), MAX_STUDY_COUNT);
@@ -20,8 +22,10 @@ interface Props {
 }
 
 const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
-    const { lessons, getCards, getDueCards, isInverted, setIsInverted, queueStudyCards } =
-        useCards();
+    const { settings, persistSettings } = useSettings();
+    const { lessons, getCards, getDueCards, queueStudyCards } = useCards();
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
 
     const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(undefined);
 
@@ -34,6 +38,12 @@ const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
         updateStudyCount(getDueCards(lesson.id).length);
     };
 
+    useEffect(() => {
+        if (lessons.length === 0) return;
+
+        onSelectLesson(lessons[0]);
+    }, []);
+
     const handleStudy = (): void => {
         if (!selectedLesson) return;
 
@@ -44,8 +54,9 @@ const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
     };
 
     return (
-        <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.modalContent}>
-            <View style={styles.studySettingsArea}>
+        <Dialog visible={visible} onDismiss={hideModal}>
+            <Dialog.Title>Study</Dialog.Title>
+            <Dialog.Content>
                 <SelectLessonMenu
                     lessons={lessons}
                     selectedLesson={selectedLesson}
@@ -62,10 +73,10 @@ const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
                         step={1}
                         value={studyCount}
                         onValueChange={updateStudyCount}
-                        minimumTrackTintColor="#5B8DEF"
-                        maximumTrackTintColor="#E5E7EB"
+                        minimumTrackTintColor={theme.colors.primary}
+                        maximumTrackTintColor={theme.colors.secondary}
                         thumbSize={20}
-                        thumbTintColor="#5B8DEF"
+                        thumbTintColor={theme.colors.primary}
                     />
                     <TextInput
                         mode="outlined"
@@ -76,77 +87,87 @@ const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
                         onChangeText={c => setStudyCount(Number(c))}
                         onEndEditing={() => updateStudyCount(Number(studyCount) || MIN_STUDY_COUNT)}
                     />
+                    <Text>Cards</Text>
                 </View>
                 <View style={styles.switchRow}>
-                    <Switch value={isInverted} onValueChange={() => setIsInverted(!isInverted)} />
+                    <Switch
+                        value={settings.inverted}
+                        onValueChange={persistSettings({
+                            ...settings,
+                            inverted: !settings.inverted,
+                        })}
+                    />
                     <Text style={styles.switchLabel}>Inverted (answer is front side)</Text>
                 </View>
-                <View style={styles.buttonRow}>
-                    <Button mode="outlined" onPress={hideModal} style={styles.cancelBtn}>
-                        Cancel
-                    </Button>
-                    <Button mode="contained" onPress={handleStudy} style={styles.studyBtn}>
-                        Start
-                    </Button>
-                </View>
-            </View>
-        </Modal>
+            </Dialog.Content>
+            <Dialog.Actions style={styles.btnRow}>
+                <Button mode="outlined" onPress={hideModal} style={styles.cancelBtn}>
+                    Cancel
+                </Button>
+                <Button mode="contained" onPress={handleStudy} style={styles.studyBtn}>
+                    Start
+                </Button>
+            </Dialog.Actions>
+        </Dialog>
     );
 };
 
 export default StudyModal;
 
-const styles = StyleSheet.create({
-    modalContent: {
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 24,
-        marginHorizontal: 20,
-        maxWidth: 420,
-        alignSelf: 'center',
-        width: '100%',
-    },
-    studyArea: {
-        marginTop: 16,
-        marginHorizontal: 20,
-    },
-    studySettingsArea: {
-        gap: 20,
-    },
-    sliderRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-    },
-    slider: {
-        flex: 1,
-    },
-    studyCountInput: {
-        width: 64,
-        height: 40,
-        textAlign: 'center',
-    },
-    switchRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-    },
-    switchLabel: {
-        flexShrink: 1,
-    },
-    buttonRow: {
-        flexDirection: 'row',
-        alignItems: 'stretch',
-        gap: 8,
-    },
-    cancelBtn: {
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignSelf: 'stretch',
-    },
-    studyBtn: {
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignSelf: 'stretch',
-    },
-});
+const createStyles = (theme: AppTheme) =>
+    StyleSheet.create({
+        modalContent: {
+            backgroundColor: theme.colors.elevation.level3,
+            borderRadius: 16,
+            padding: 24,
+            marginHorizontal: 20,
+            maxWidth: 420,
+            alignSelf: 'center',
+            width: '100%',
+        },
+        studyArea: {
+            marginTop: 16,
+            marginHorizontal: 20,
+        },
+        studySettingsArea: {
+            gap: 20,
+        },
+        sliderRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+            marginTop: 8,
+        },
+        slider: {
+            flex: 1,
+        },
+        studyCountInput: {
+            width: 64,
+            height: 40,
+            textAlign: 'center',
+        },
+        switchRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+            marginTop: 8,
+        },
+        switchLabel: {
+            flexShrink: 1,
+        },
+        btnRow: {
+            flexDirection: 'row',
+            alignItems: 'stretch',
+            gap: 8,
+        },
+        cancelBtn: {
+            borderRadius: 12,
+            justifyContent: 'center',
+            alignSelf: 'stretch',
+        },
+        studyBtn: {
+            borderRadius: 12,
+            justifyContent: 'center',
+            alignSelf: 'stretch',
+        },
+    });

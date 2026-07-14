@@ -5,28 +5,22 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCards } from '../../CardsContext';
 import { Card, Quality, StudyCard } from '../../types';
+import { AppTheme, getQualityColor, useAppTheme } from '../../themes';
 import DoneScreen from './DoneScreen';
 import FlipCard from './FlipCard';
 import Header from './Header';
 import { applyReview, shuffleCards, toCard } from './sm2';
-
-const INCORRECT_COLOR = '#EF444433';
-
-const CORRECT_QUALITY_COLORS: Record<Quality, string> = {
-    0: '#EF643433',
-    1: '#F59E0B33',
-    2: '#F5DE0233',
-    3: '#10B98133',
-    4: '#5B8DEF33',
-    5: '#5B8DEF33',
-};
+import { useSettings } from '../../settings/SettingsContext';
 
 interface Props {
     onDone: () => void;
 }
 
 const StudyScreen = ({ onDone }: Props): JSX.Element => {
-    const { lessons, studyCards, isInverted, persist } = useCards();
+    const { settings } = useSettings();
+    const { lessons, studyCards, persist } = useCards();
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
 
     const [currentCards, setCurrentCards] = useState<StudyCard[]>(studyCards);
     const [index, setIndex] = useState(0);
@@ -69,10 +63,10 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
     }
 
     const current = currentCards[index];
-    const solution = isInverted ? current.front : current.back;
-    const question = isInverted ? current.back : current.front;
-    const solutionComment = isInverted ? current.frontComment : current.backComment;
-    const questionComment = isInverted ? current.backComment : current.frontComment;
+    const solution = settings.inverted ? current.front : current.back;
+    const question = settings.inverted ? current.back : current.front;
+    const solutionComment = settings.inverted ? current.frontComment : current.backComment;
+    const questionComment = settings.inverted ? current.backComment : current.frontComment;
 
     const handleNext = (): void => {
         setAnswer('');
@@ -96,8 +90,8 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
 
     const tintColor = checked
         ? isCorrect
-            ? CORRECT_QUALITY_COLORS[current.quality]
-            : INCORRECT_COLOR
+            ? getQualityColor(theme, current.quality, true)
+            : theme.colors.errorContainer
         : undefined;
 
     return (
@@ -138,28 +132,29 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
 
 export default StudyScreen;
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F5F6FA',
-    },
-    studyArea: {
-        flex: 1,
-        flexDirection: 'column',
-        paddingHorizontal: 20,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        gap: 16,
-    },
-    answerInput: {
-        alignSelf: 'stretch',
-        paddingTop: 8,
-        minHeight: 80,
-    },
-    checkBtn: {
-        minHeight: 64,
-        borderRadius: 4,
-        alignSelf: 'stretch',
-        justifyContent: 'center',
-    },
-});
+const createStyles = (theme: AppTheme) =>
+    StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.colors.background,
+        },
+        studyArea: {
+            flex: 1,
+            flexDirection: 'column',
+            paddingHorizontal: 20,
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            gap: 16,
+        },
+        answerInput: {
+            alignSelf: 'stretch',
+            paddingTop: 8,
+            minHeight: 80,
+        },
+        checkBtn: {
+            minHeight: 64,
+            borderRadius: 4,
+            alignSelf: 'stretch',
+            justifyContent: 'center',
+        },
+    });

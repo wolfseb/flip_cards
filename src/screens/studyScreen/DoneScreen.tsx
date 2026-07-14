@@ -1,8 +1,12 @@
 import { JSX } from 'react/jsx-runtime';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
+import { AppTheme, useAppTheme } from '../../themes';
 
 const DoneScreen = ({ onDone }: { onDone: () => void }): JSX.Element => {
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
+
     return (
         <View style={styles.doneView}>
             <Text variant="headlineMedium" style={styles.doneTitle}>
@@ -20,24 +24,25 @@ const DoneScreen = ({ onDone }: { onDone: () => void }): JSX.Element => {
 
 export default DoneScreen;
 
-const styles = StyleSheet.create({
-    doneView: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 40,
-    },
-    doneTitle: {
-        fontWeight: '700',
-        color: '#1A1A2E',
-    },
-    doneSub: {
-        color: '#6B7280',
-        marginTop: 8,
-        textAlign: 'center',
-    },
-    doneBtn: {
-        marginTop: 28,
-        borderRadius: 12,
-    },
-});
+const createStyles = (theme: AppTheme) =>
+    StyleSheet.create({
+        doneView: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 40,
+        },
+        doneTitle: {
+            fontWeight: '700',
+            color: theme.colors.onSurface,
+        },
+        doneSub: {
+            color: theme.colors.onSurfaceVariant,
+            marginTop: 8,
+            textAlign: 'center',
+        },
+        doneBtn: {
+            marginTop: 28,
+            borderRadius: 12,
+        },
+    });

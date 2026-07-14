@@ -7,18 +7,12 @@ import HomeScreen from './src/screens/homeScreen/HomeScreen';
 import StudyScreen from './src/screens/studyScreen/StudyScreen';
 import EditScreen from './src/screens/EditScreen';
 import LessonScreen from './src/screens/lessonScreen/LessonScreen';
-
-const theme = {
-    ...MD3LightTheme,
-    colors: {
-        ...MD3LightTheme.colors,
-        primary: '#5B8DEF',
-        background: '#F5F6FA',
-    },
-};
+import { SettingsContextProvider, useSettings } from './src/settings/SettingsContext';
+import { darkTheme, lightTheme } from './src/themes';
 
 const AppContent = (): JSX.Element => {
     const { lessons, getCards } = useCards();
+    const { settings } = useSettings();
     const [screen, setScreen] = useState<Screen>({ name: 'home' });
 
     const lessonId =
@@ -66,16 +60,18 @@ const AppContent = (): JSX.Element => {
 
     return (
         <SafeAreaProvider>
-            <PaperProvider theme={theme}>{content}</PaperProvider>
+            <PaperProvider theme={settings.dark ? darkTheme : lightTheme}>{content}</PaperProvider>
         </SafeAreaProvider>
     );
 };
 
 const App = (): JSX.Element => {
     return (
-        <CardsContextProvider>
-            <AppContent />
-        </CardsContextProvider>
+        <SettingsContextProvider>
+            <CardsContextProvider>
+                <AppContent />
+            </CardsContextProvider>
+        </SettingsContextProvider>
     );
 };
 

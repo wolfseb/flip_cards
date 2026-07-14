@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useCards } from '../CardsContext';
 import { Card, Lesson, Screen } from '../types';
+import { AppTheme, useAppTheme } from '../themes';
 
 interface Props {
     screen: Screen;
@@ -15,6 +16,8 @@ interface Props {
 
 const EditScreen = ({ screen, lesson, card, onReturn }: Props): JSX.Element => {
     const { persistLesson } = useCards();
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
 
     const [front, setFront] = useState(card?.front ?? '');
     const [back, setBack] = useState(card?.back ?? '');
@@ -60,7 +63,7 @@ const EditScreen = ({ screen, lesson, card, onReturn }: Props): JSX.Element => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Button mode="text" onPress={() => onReturn()} textColor="#6B7280">
+                <Button mode="text" onPress={() => onReturn()} textColor={theme.colors.onSurfaceVariant}>
                     Cancel
                 </Button>
                 <Text variant="titleMedium" style={styles.title}>
@@ -135,33 +138,34 @@ const EditScreen = ({ screen, lesson, card, onReturn }: Props): JSX.Element => {
 
 export default EditScreen;
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F5F6FA',
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        backgroundColor: '#fff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E5E7EB',
-    },
-    title: {
-        fontWeight: '600',
-        color: '#1A1A2E',
-    },
-    body: {
-        flex: 1,
-    },
-    bodyContent: {
-        padding: 20,
-        gap: 14,
-    },
-    input: {
-        minHeight: 100,
-    },
-});
+const createStyles = (theme: AppTheme) =>
+    StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.colors.background,
+        },
+        header: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: 20,
+            paddingVertical: 16,
+            backgroundColor: theme.colors.surface,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.outlineVariant,
+        },
+        title: {
+            fontWeight: '600',
+            color: theme.colors.onSurface,
+        },
+        body: {
+            flex: 1,
+        },
+        bodyContent: {
+            padding: 20,
+            gap: 14,
+        },
+        input: {
+            minHeight: 100,
+        },
+    });

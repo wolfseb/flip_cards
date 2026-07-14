@@ -1,0 +1,182 @@
+import { useTheme } from 'react-native-paper';
+
+import { Quality } from './types';
+
+export const lightTheme = {
+    dark: false,
+    colors: {
+        primary: 'rgb(0, 95, 175)',
+        onPrimary: 'rgb(255, 255, 255)',
+        primaryContainer: 'rgb(212, 227, 255)',
+        onPrimaryContainer: 'rgb(0, 28, 58)',
+        secondary: 'rgb(0, 104, 116)',
+        onSecondary: 'rgb(255, 255, 255)',
+        secondaryContainer: 'rgb(151, 240, 255)',
+        onSecondaryContainer: 'rgb(0, 31, 36)',
+        tertiary: 'rgb(16, 109, 38)',
+        onTertiary: 'rgb(255, 255, 255)',
+        tertiaryContainer: 'rgb(158, 247, 158)',
+        onTertiaryContainer: 'rgb(0, 33, 5)',
+        error: 'rgb(186, 26, 26)',
+        onError: 'rgb(255, 255, 255)',
+        errorContainer: 'rgb(255, 218, 214)',
+        onErrorContainer: 'rgb(65, 0, 2)',
+        background: 'rgb(253, 252, 255)',
+        onBackground: 'rgb(26, 28, 30)',
+        surface: 'rgb(253, 252, 255)',
+        onSurface: 'rgb(26, 28, 30)',
+        surfaceVariant: 'rgb(224, 226, 236)',
+        onSurfaceVariant: 'rgb(67, 71, 78)',
+        outline: 'rgb(116, 119, 127)',
+        outlineVariant: 'rgb(195, 198, 207)',
+        shadow: 'rgb(0, 0, 0)',
+        scrim: 'rgb(0, 0, 0)',
+        inverseSurface: 'rgb(47, 48, 51)',
+        inverseOnSurface: 'rgb(241, 240, 244)',
+        inversePrimary: 'rgb(165, 200, 255)',
+        elevation: {
+            level0: 'transparent',
+            level1: 'rgb(240, 244, 251)',
+            level2: 'rgb(233, 239, 249)',
+            level3: 'rgb(225, 235, 246)',
+            level4: 'rgb(223, 233, 245)',
+            level5: 'rgb(218, 230, 244)',
+        },
+        surfaceDisabled: 'rgba(26, 28, 30, 0.12)',
+        onSurfaceDisabled: 'rgba(26, 28, 30, 0.38)',
+        backdrop: 'rgba(45, 49, 56, 0.4)',
+        quality0: 'rgb(172, 52, 3)',
+        onQuality0: 'rgb(255, 255, 255)',
+        quality0Container: 'rgb(255, 219, 208)',
+        onQuality0Container: 'rgb(57, 11, 0)',
+        quality1: 'rgb(133, 83, 0)',
+        onQuality1: 'rgb(255, 255, 255)',
+        quality1Container: 'rgb(255, 221, 184)',
+        onQuality1Container: 'rgb(42, 23, 0)',
+        quality2: 'rgb(106, 95, 0)',
+        onQuality2: 'rgb(255, 255, 255)',
+        quality2Container: 'rgb(252, 228, 20)',
+        onQuality2Container: 'rgb(32, 28, 0)',
+        quality3: 'rgb(56, 107, 1)',
+        onQuality3: 'rgb(255, 255, 255)',
+        quality3Container: 'rgb(183, 244, 129)',
+        onQuality3Container: 'rgb(13, 32, 0)',
+        quality4: 'rgb(0, 108, 73)',
+        onQuality4: 'rgb(255, 255, 255)',
+        quality4Container: 'rgb(111, 251, 190)',
+        onQuality4Container: 'rgb(0, 33, 19)',
+        quality5: 'rgb(0, 95, 175)',
+        onQuality5: 'rgb(255, 255, 255)',
+        quality5Container: 'rgb(212, 227, 255)',
+        onQuality5Container: 'rgb(0, 28, 58)',
+    },
+};
+
+export const darkTheme = {
+    dark: true,
+    colors: {
+        primary: 'rgb(165, 200, 255)',
+        onPrimary: 'rgb(0, 49, 95)',
+        primaryContainer: 'rgb(0, 71, 134)',
+        onPrimaryContainer: 'rgb(212, 227, 255)',
+        secondary: 'rgb(79, 216, 235)',
+        onSecondary: 'rgb(0, 54, 61)',
+        secondaryContainer: 'rgb(0, 79, 88)',
+        onSecondaryContainer: 'rgb(151, 240, 255)',
+        tertiary: 'rgb(131, 218, 133)',
+        onTertiary: 'rgb(0, 57, 14)',
+        tertiaryContainer: 'rgb(0, 83, 24)',
+        onTertiaryContainer: 'rgb(158, 247, 158)',
+        error: 'rgb(255, 180, 171)',
+        onError: 'rgb(105, 0, 5)',
+        errorContainer: 'rgb(147, 0, 10)',
+        onErrorContainer: 'rgb(255, 180, 171)',
+        background: 'rgb(26, 28, 30)',
+        onBackground: 'rgb(227, 226, 230)',
+        surface: 'rgb(26, 28, 30)',
+        onSurface: 'rgb(227, 226, 230)',
+        surfaceVariant: 'rgb(67, 71, 78)',
+        onSurfaceVariant: 'rgb(195, 198, 207)',
+        outline: 'rgb(141, 145, 153)',
+        outlineVariant: 'rgb(67, 71, 78)',
+        shadow: 'rgb(0, 0, 0)',
+        scrim: 'rgb(0, 0, 0)',
+        inverseSurface: 'rgb(227, 226, 230)',
+        inverseOnSurface: 'rgb(47, 48, 51)',
+        inversePrimary: 'rgb(0, 95, 175)',
+        elevation: {
+            level0: 'transparent',
+            level1: 'rgb(33, 37, 41)',
+            level2: 'rgb(37, 42, 48)',
+            level3: 'rgb(41, 47, 55)',
+            level4: 'rgb(43, 49, 57)',
+            level5: 'rgb(46, 52, 62)',
+        },
+        surfaceDisabled: 'rgba(227, 226, 230, 0.12)',
+        onSurfaceDisabled: 'rgba(227, 226, 230, 0.38)',
+        backdrop: 'rgba(45, 49, 56, 0.4)',
+        quality0: 'rgb(255, 181, 158)',
+        onQuality0: 'rgb(93, 24, 0)',
+        quality0Container: 'rgb(132, 37, 0)',
+        onQuality0Container: 'rgb(255, 219, 208)',
+        quality1: 'rgb(255, 185, 95)',
+        onQuality1: 'rgb(71, 42, 0)',
+        quality1Container: 'rgb(101, 62, 0)',
+        onQuality1Container: 'rgb(255, 221, 184)',
+        quality2: 'rgb(221, 200, 80)',
+        onQuality2: 'rgb(55, 49, 0)',
+        quality2Container: 'rgb(80, 71, 0)',
+        onQuality2Container: 'rgb(252, 228, 85)',
+        quality3: 'rgb(156, 215, 105)',
+        onQuality3: 'rgb(26, 55, 0)',
+        quality3Container: 'rgb(40, 80, 0)',
+        onQuality3Container: 'rgb(183, 244, 129)',
+        quality4: 'rgb(78, 222, 163)',
+        onQuality4: 'rgb(0, 56, 36)',
+        quality4Container: 'rgb(0, 82, 54)',
+        onQuality4Container: 'rgb(111, 251, 190)',
+        quality5: 'rgb(165, 200, 255)',
+        onQuality5: 'rgb(0, 49, 95)',
+        quality5Container: 'rgb(0, 71, 134)',
+        onQuality5Container: 'rgb(212, 227, 255)',
+    },
+};
+
+export type AppTheme = typeof lightTheme;
+export type AppThemeColors = AppTheme['colors'];
+
+export const useAppTheme = (): AppTheme => useTheme<AppTheme>();
+
+const QUALITY_COLOR_KEYS: Record<Quality, keyof AppThemeColors> = {
+    0: 'quality0',
+    1: 'quality1',
+    2: 'quality2',
+    3: 'quality3',
+    4: 'quality4',
+    5: 'quality5',
+};
+
+const QUALITY_CONTAINER_COLOR_KEYS: Record<Quality, keyof AppThemeColors> = {
+    0: 'quality0Container',
+    1: 'quality1Container',
+    2: 'quality2Container',
+    3: 'quality3Container',
+    4: 'quality4Container',
+    5: 'quality5Container',
+};
+
+export const getQualityColor = (theme: AppTheme, quality: Quality, container = false): string => {
+    const key = container ? QUALITY_CONTAINER_COLOR_KEYS[quality] : QUALITY_COLOR_KEYS[quality];
+    return theme.colors[key] as string;
+};
+
+const LEVEL_COLOR_KEYS: Record<number, keyof AppThemeColors> = {
+    1: 'quality1',
+    2: 'quality2',
+    3: 'quality3',
+    4: 'quality4',
+    5: 'quality5',
+};
+
+export const getLevelColor = (theme: AppTheme, level: number): string =>
+    theme.colors[LEVEL_COLOR_KEYS[level] ?? 'quality1'] as string;

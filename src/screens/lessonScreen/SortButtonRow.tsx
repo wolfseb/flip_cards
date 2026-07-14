@@ -86,10 +86,6 @@ const styles = StyleSheet.create({
         elevation: 0,
         marginTop: 0,
     },
-    sortButtonLabel: {
-        color: '#000',
-        fontSize: 16,
-    },
     dropdownAnchor: {
         borderRadius: 12,
         justifyContent: 'center',

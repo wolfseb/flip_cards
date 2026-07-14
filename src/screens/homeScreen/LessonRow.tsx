@@ -4,8 +4,8 @@ import { Avatar, IconButton, Card as PaperCard, Text } from 'react-native-paper'
 import { Lesson } from '../../types';
 import { useMemo } from 'react';
 import { useCards } from '../../CardsContext';
+import { AppTheme, getLevelColor, useAppTheme } from '../../themes';
 
-const LEVEL_COLORS = ['#9E9E9E', '#2196F3', '#4CAF50', '#FF9800', '#9C27B0'];
 const LEVEL_NAMES = ['New', 'Learning 1', 'Learning 2', 'Expert 1', 'Expert 2'];
 
 interface Props {
@@ -16,6 +16,8 @@ interface Props {
 
 const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
     const { getDueCards } = useCards();
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
     const dueCards = getDueCards(item.id).length;
 
     const minLevel = useMemo(
@@ -36,7 +38,7 @@ const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
                         size={32}
                         label={`L${minLevel}`}
                         labelStyle={styles.levelBadgeText}
-                        style={{ backgroundColor: LEVEL_COLORS[minLevel - 1] }}
+                        style={{ backgroundColor: getLevelColor(theme, minLevel) }}
                     />
                     <Text style={styles.levelBadgeName}>{LEVEL_NAMES[minLevel - 1]}</Text>
                 </View>
@@ -55,7 +57,7 @@ const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
                     <IconButton
                         icon={'delete'}
                         onPress={() => onDeleteLesson(item.id)}
-                        iconColor="#EF4444"
+                        iconColor={theme.colors.error}
                     />
                 </View>
             </PaperCard.Content>
@@ -65,37 +67,38 @@ const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
 
 export default LessonRow;
 
-const styles = StyleSheet.create({
-    cardRow: {
-        marginBottom: 8,
-        borderRadius: 12,
-    },
-    content: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    levelBadge: {
-        alignItems: 'center',
-    },
-    levelBadgeText: {
-        fontSize: 12,
-        fontWeight: '700',
-    },
-    levelBadgeName: {
-        color: '#6B7280',
-        fontSize: 9,
-        fontWeight: '500',
-        marginTop: 2,
-    },
-    text: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#1A1A2E',
-        marginRight: 12,
-    },
-    rowActions: {
-        flexDirection: 'row',
-        marginLeft: 8,
-    },
-});
+const createStyles = (theme: AppTheme) =>
+    StyleSheet.create({
+        cardRow: {
+            marginBottom: 8,
+            borderRadius: 12,
+        },
+        content: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+        },
+        levelBadge: {
+            alignItems: 'center',
+        },
+        levelBadgeText: {
+            fontSize: 12,
+            fontWeight: '700',
+        },
+        levelBadgeName: {
+            color: theme.colors.onSurfaceVariant,
+            fontSize: 9,
+            fontWeight: '500',
+            marginTop: 2,
+        },
+        text: {
+            fontSize: 14,
+            fontWeight: '600',
+            color: theme.colors.onSurface,
+            marginRight: 12,
+        },
+        rowActions: {
+            flexDirection: 'row',
+            marginLeft: 8,
+        },
+    });

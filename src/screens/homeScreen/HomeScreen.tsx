@@ -7,7 +7,9 @@ import { useCards } from '../../CardsContext';
 import LessonRow from './LessonRow';
 import StudyModal from './StudyModal';
 import EditLessonModal from './EditLessonModal';
-import SettingsMenu from '../Settings';
+import SettingsMenu from '../SettingsMenu';
+import { useSettings } from '../../settings/SettingsContext';
+import { AppTheme, useAppTheme } from '../../themes';
 
 interface Props {
     onStudy: () => void;
@@ -15,8 +17,11 @@ interface Props {
 }
 
 const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
+    const { settings } = useSettings();
     const { lessons, persist } = useCards();
     const insets = useSafeAreaInsets();
+    const theme = useAppTheme();
+    const styles = createStyles(theme);
 
     const [isStudyModalVisible, setIsStudyModalVisible] = useState(false);
     const showStudyModal = () => setIsStudyModalVisible(true);
@@ -49,7 +54,7 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Appbar.Header statusBarHeight={0}>
+            <Appbar.Header statusBarHeight={0} dark={settings.dark}>
                 <Appbar.Content title={'FlipCards'} />
                 <SettingsMenu />
             </Appbar.Header>
@@ -105,31 +110,32 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F5F6FA',
-    },
-    studyBtn: {
-        marginTop: 16,
-        marginHorizontal: 16,
-    },
-    empty: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 40,
-    },
-    emptyTitle: {
-        color: '#374151',
-    },
-    emptyHint: {
-        color: '#9CA3AF',
-        marginTop: 6,
-        textAlign: 'center',
-    },
-    list: {
-        padding: 20,
-        paddingBottom: 40,
-    },
-});
+const createStyles = (theme: AppTheme) =>
+    StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.colors.background,
+        },
+        studyBtn: {
+            marginTop: 16,
+            marginHorizontal: 16,
+        },
+        empty: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 40,
+        },
+        emptyTitle: {
+            color: theme.colors.onSurface,
+        },
+        emptyHint: {
+            color: theme.colors.onSurfaceVariant,
+            marginTop: 6,
+            textAlign: 'center',
+        },
+        list: {
+            padding: 20,
+            paddingBottom: 40,
+        },
+    });
