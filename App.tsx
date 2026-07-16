@@ -1,6 +1,7 @@
 import { JSX, useCallback, useEffect, useMemo, useState } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
 import { Screen } from './src/types';
@@ -80,7 +81,10 @@ const AppContent = (): JSX.Element => {
 
     return (
         <SafeAreaProvider>
-            <PaperProvider theme={settings.dark ? darkTheme : lightTheme}>{content}</PaperProvider>
+            <PaperProvider theme={settings.dark ? darkTheme : lightTheme}>
+                <StatusBar style={settings.dark ? 'light' : 'dark'} />
+                {content}
+            </PaperProvider>
         </SafeAreaProvider>
     );
 };
