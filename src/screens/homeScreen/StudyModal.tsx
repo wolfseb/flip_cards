@@ -1,7 +1,7 @@
 import Slider from '@react-native-community/slider';
-import { JSX, useEffect, useMemo, useState } from 'react';
+import { JSX, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Dialog, Modal, Switch, Text, TextInput } from 'react-native-paper';
+import { Button, Dialog, RadioButton, Switch, Text, TextInput } from 'react-native-paper';
 import { useCards } from '../../CardsContext';
 import SelectLessonMenu from './SelectLessonMenu';
 import { Lesson } from '../../types';
@@ -16,6 +16,12 @@ const MAX_STUDY_COUNT = 40;
 const clamp = (count: number): number =>
     Math.min(Math.max(count, MIN_STUDY_COUNT), MAX_STUDY_COUNT);
 
+const STUDY_MODE = {
+    lesson: 'lesson',
+    due: 'due',
+} as const;
+type StudyMode = keyof typeof STUDY_MODE;
+
 interface Props {
     visible: boolean;
     hideModal: () => void;
@@ -24,13 +30,14 @@ interface Props {
 
 const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
     const { settings, persistSettings } = useSettings();
-    const { lessons, queueStudyCards } = useCards();
+    const { lessons, allDueCards, queueStudyCards } = useCards();
     const theme = useAppTheme();
     const styles = useMemo(() => createStyles(theme), [theme]);
 
-    const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(undefined);
-
+    const [mode, setMode] = useState<StudyMode>(STUDY_MODE.lesson);
+    const [selectedLesson, setSelectedLesson] = useState<Lesson>(lessons[0]);
     const [studyCount, setStudyCount] = useState(1);
+
     const updateStudyCount = (count: number): void => {
         setStudyCount(clamp(count));
     };
@@ -38,19 +45,43 @@ const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
         setSelectedLesson(lesson);
         updateStudyCount(lesson.cards.filter(isDue).length);
     };
+    const onSelectMode = (update: string) => {
+        setMode(update as StudyMode);
+        switch (update) {
+            case STUDY_MODE.lesson:
+                onSelectLesson(selectedLesson);
+                return;
+            case STUDY_MODE.due:
+                updateStudyCount(allDueCards.length);
+                return;
+        }
+    };
 
-    useEffect(() => {
-        if (lessons.length === 0) return;
-        onSelectLesson(lessons[0]);
-    }, []);
+    const maxValue = useMemo(() => {
+        switch (mode) {
+            case STUDY_MODE.lesson:
+                return Math.min(MAX_STUDY_COUNT, selectedLesson.cards.length ?? MIN_STUDY_COUNT);
+            case STUDY_MODE.due:
+                return Math.min(MAX_STUDY_COUNT, allDueCards.length);
+        }
+    }, [mode, selectedLesson]);
 
     const handleStudy = (): void => {
-        if (!selectedLesson) return;
+        let cardsToStudy = [];
 
-        const cardsToStudy = sortCards(selectedLesson.cards, 'nextReview', true).slice(
-            0,
-            studyCount,
-        );
+        switch (mode) {
+            case STUDY_MODE.lesson:
+                cardsToStudy = sortCards(selectedLesson.cards, 'nextReview', true).slice(
+                    0,
+                    studyCount,
+                );
+                break;
+            case STUDY_MODE.due:
+                cardsToStudy = sortCards(allDueCards, 'nextReview', true).slice(0, studyCount);
+                break;
+        }
+
+        if (cardsToStudy.length === 0) return;
         queueStudyCards(cardsToStudy);
         onStudy();
     };
@@ -59,19 +90,33 @@ const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
         <Dialog visible={visible} onDismiss={hideModal}>
             <Dialog.Title>Study</Dialog.Title>
             <Dialog.Content>
-                <SelectLessonMenu
-                    lessons={lessons}
-                    selectedLesson={selectedLesson}
-                    setSelectedLesson={onSelectLesson}
-                />
+                <View style={styles.studyModeArea}>
+                    <Text>Study Mode</Text>
+                    <RadioButton.Group onValueChange={onSelectMode} value={mode}>
+                        <View style={styles.studyModeBtnRow}>
+                            <View style={styles.studyModeBtn}>
+                                <RadioButton value={STUDY_MODE.lesson} />
+                                <Text>Choose Lesson</Text>
+                            </View>
+                            <View style={styles.studyModeBtn}>
+                                <RadioButton value={STUDY_MODE.due} />
+                                <Text>Due Cards</Text>
+                            </View>
+                        </View>
+                    </RadioButton.Group>
+                </View>
+                {mode === 'lesson' && (
+                    <SelectLessonMenu
+                        lessons={lessons.filter(l => l.cards.length > 0)}
+                        selectedLesson={selectedLesson}
+                        setSelectedLesson={onSelectLesson}
+                    />
+                )}
                 <View style={styles.sliderRow}>
                     <Slider
-                        style={styles.slider}
+                        style={styles.sliderComp}
                         minimumValue={MIN_STUDY_COUNT}
-                        maximumValue={Math.min(
-                            MAX_STUDY_COUNT,
-                            selectedLesson?.cards?.length ?? MIN_STUDY_COUNT,
-                        )}
+                        maximumValue={maxValue}
                         step={1}
                         value={studyCount}
                         onValueChange={updateStudyCount}
@@ -102,7 +147,7 @@ const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
                     <Text style={styles.switchLabel}>Inverted (answer is front side)</Text>
                 </View>
             </Dialog.Content>
-            <Dialog.Actions style={styles.btnRow}>
+            <Dialog.Actions style={styles.actionBtnRow}>
                 <Button mode="outlined" onPress={hideModal} style={styles.cancelBtn}>
                     Cancel
                 </Button>
@@ -127,12 +172,19 @@ const createStyles = (theme: AppTheme) =>
             alignSelf: 'center',
             width: '100%',
         },
-        studyArea: {
-            marginTop: 16,
-            marginHorizontal: 20,
+        studyModeArea: {
+            flexDirection: 'column',
+            marginBottom: 8,
         },
-        studySettingsArea: {
-            gap: 20,
+        studyModeBtnRow: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+        },
+        studyModeBtn: {
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
         },
         sliderRow: {
             flexDirection: 'row',
@@ -140,7 +192,7 @@ const createStyles = (theme: AppTheme) =>
             gap: 4,
             marginTop: 8,
         },
-        slider: {
+        sliderComp: {
             flex: 1,
         },
         studyCountInput: {
@@ -157,7 +209,7 @@ const createStyles = (theme: AppTheme) =>
         switchLabel: {
             flexShrink: 1,
         },
-        btnRow: {
+        actionBtnRow: {
             flexDirection: 'row',
             alignItems: 'stretch',
             gap: 8,

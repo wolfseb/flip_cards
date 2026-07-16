@@ -10,7 +10,6 @@ import EditLessonModal from './EditLessonModal';
 import SettingsMenu from '../../settings/SettingsMenu';
 import { useSettings } from '../../settings/SettingsContext';
 import { AppTheme, useAppTheme } from '../../themes';
-import { Lesson } from '../../types';
 
 interface Props {
     onStudy: () => void;
@@ -19,7 +18,7 @@ interface Props {
 
 const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
     const { settings } = useSettings();
-    const { lessons, persist } = useCards();
+    const { lessons, allCards, persist } = useCards();
     const insets = useSafeAreaInsets();
     const theme = useAppTheme();
     const styles = useMemo(() => createStyles(theme), [theme]);
@@ -63,7 +62,12 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
                 <SettingsMenu />
             </Appbar.Header>
 
-            <Button mode="contained" onPress={showStudyModal} style={styles.studyBtn}>
+            <Button
+                mode="contained"
+                onPress={showStudyModal}
+                style={styles.studyBtn}
+                disabled={allCards.length === 0}
+            >
                 Study
             </Button>
 
@@ -90,13 +94,12 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
                     )}
                 />
             )}
-            {lessons.length > 0 && (
-                <StudyModal
-                    visible={isStudyModalVisible}
-                    hideModal={hideStudyModal}
-                    onStudy={onStudy}
-                />
-            )}
+
+            <StudyModal
+                visible={isStudyModalVisible}
+                hideModal={hideStudyModal}
+                onStudy={onStudy}
+            />
             <FAB
                 icon="plus"
                 style={{

@@ -1,6 +1,6 @@
 import { JSX, useMemo, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, Menu, Text } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { Button, Menu } from 'react-native-paper';
 import { Lesson } from '../../types';
 import { AppTheme, useAppTheme } from '../../themes';
 
@@ -18,35 +18,33 @@ const SelectLessonMenu = ({ lessons, selectedLesson, setSelectedLesson }: Props)
     const hideMenu = () => setIsVisible(false);
 
     return (
-        <View>
-            <Menu
-                visible={isVisible}
-                onDismiss={hideMenu}
-                anchor={
-                    <Button
-                        mode="outlined"
-                        onPress={showMenu}
-                        icon="menu-down"
-                        contentStyle={styles.dropdownContent}
-                        style={styles.dropdownAnchor}
-                    >
-                        {selectedLesson?.name ?? 'Select lesson'}
-                    </Button>
-                }
-                style={styles.menu}
-            >
-                {lessons.map(lesson => (
-                    <Menu.Item
-                        key={lesson.id}
-                        title={lesson.name}
-                        onPress={() => {
-                            setSelectedLesson(lesson);
-                            hideMenu();
-                        }}
-                    />
-                ))}
-            </Menu>
-        </View>
+        <Menu
+            visible={isVisible}
+            onDismiss={hideMenu}
+            anchor={
+                <Button
+                    mode="outlined"
+                    onPress={showMenu}
+                    icon="menu-down"
+                    contentStyle={styles.dropdownContent}
+                    style={styles.dropdownAnchor}
+                >
+                    {selectedLesson?.name ?? 'Select lesson'}
+                </Button>
+            }
+            style={styles.menu}
+        >
+            {lessons.map(lesson => (
+                <Menu.Item
+                    key={lesson.id}
+                    title={lesson.name}
+                    onPress={() => {
+                        setSelectedLesson(lesson);
+                        hideMenu();
+                    }}
+                />
+            ))}
+        </Menu>
     );
 };
 

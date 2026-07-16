@@ -20,6 +20,7 @@ interface CardsContextValue {
     setSortState: React.Dispatch<React.SetStateAction<SortState>>;
     searchTerm: string;
     setSearchTerm: (term: string) => void;
+    allCards: Card[];
     allDueCards: Card[];
     studyCards: StudyCard[];
     queueStudyCards: (cards: Card[]) => void;
@@ -33,6 +34,7 @@ const CardsContext = createContext<CardsContextValue>({
     setSortState: () => {},
     searchTerm: '',
     setSearchTerm: () => {},
+    allCards: [],
     allDueCards: [],
     studyCards: [],
     queueStudyCards: () => {},
@@ -64,7 +66,8 @@ export const CardsContextProvider = ({ children }: { children: ReactNode }): Rea
         [lessons, persist],
     );
 
-    const allDueCards = useMemo(() => lessons.flatMap(l => l.cards).filter(isDue), [lessons]);
+    const allCards = useMemo(() => lessons.flatMap(l => l.cards), [lessons]);
+    const allDueCards = useMemo(() => allCards.filter(isDue), [allCards]);
 
     const queueStudyCards = (cards: Card[]): void => {
         setStudyCards(shuffleCards(cards.map(toStudyCard)));
@@ -78,6 +81,7 @@ export const CardsContextProvider = ({ children }: { children: ReactNode }): Rea
                 setSortState,
                 searchTerm,
                 setSearchTerm,
+                allCards,
                 allDueCards,
                 studyCards,
                 queueStudyCards,
