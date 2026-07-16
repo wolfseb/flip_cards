@@ -1,7 +1,7 @@
 import { JSX, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Appbar, Menu } from 'react-native-paper';
-import { useSettings } from '../settings/SettingsContext';
+import { useSettings } from './SettingsContext';
 
 const SettingsMenu = (): JSX.Element => {
     const { settings, persistSettings } = useSettings();

@@ -7,7 +7,7 @@ import { useCards } from '../../CardsContext';
 import LessonRow from './LessonRow';
 import StudyModal from './StudyModal';
 import EditLessonModal from './EditLessonModal';
-import SettingsMenu from '../SettingsMenu';
+import SettingsMenu from '../../settings/SettingsMenu';
 import { useSettings } from '../../settings/SettingsContext';
 import { AppTheme, useAppTheme } from '../../themes';
 

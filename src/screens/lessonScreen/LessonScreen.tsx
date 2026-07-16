@@ -9,7 +9,7 @@ import StatsRow from './StatsRow';
 import { SortButtonRow } from './SortButtonRow';
 import CardRow from './CardRow';
 import EditLessonModal from '../homeScreen/EditLessonModal';
-import SettingsMenu from '../SettingsMenu';
+import SettingsMenu from '../../settings/SettingsMenu';
 import { AppTheme, useAppTheme } from '../../themes';
 
 interface Props {
@@ -40,10 +40,7 @@ const LessonScreen = ({
 
     const handleAddCard = () => onAddCard();
 
-    const sortedCards = useMemo(
-        () => getSorted(currentLesson.id),
-        [getSorted, currentLesson.id],
-    );
+    const sortedCards = useMemo(() => getSorted(currentLesson.id), [getSorted, currentLesson.id]);
 
     const renderItem = useCallback(
         ({ item }: { item: (typeof sortedCards)[number] }) => (
