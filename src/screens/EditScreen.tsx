@@ -9,8 +9,8 @@ import { AppTheme, useAppTheme } from '../themes';
 
 interface Props {
     screen: Screen;
-    card?: Card; // undefined = new card
     lesson: Lesson;
+    card?: Card; // undefined = new card
     onReturn: () => void;
 }
 
@@ -63,7 +63,7 @@ const EditScreen = ({ screen, lesson, card, onReturn }: Props): JSX.Element => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Button mode="text" onPress={() => onReturn()} textColor={theme.colors.onSurfaceVariant}>
+                <Button mode="text" onPress={onReturn} textColor={theme.colors.onSurfaceVariant}>
                     Cancel
                 </Button>
                 <Text variant="titleMedium" style={styles.title}>

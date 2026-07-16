@@ -1,4 +1,4 @@
-import { JSX, useCallback, useEffect, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Card, Button, Menu, Searchbar, IconButton } from 'react-native-paper';
 
@@ -6,14 +6,14 @@ import { useCards } from '../../CardsContext';
 import { SORT_MAP, SortKey } from '../../sort';
 
 export const SortButtonRow = (): JSX.Element => {
-    const { sortState, sortBy, searchTerm, setSearchTerm } = useCards();
+    const { sortState, setSortState, searchTerm, setSearchTerm } = useCards();
 
     const [isVisible, setIsVisible] = useState(false);
     const showMenu = () => setIsVisible(true);
     const hideMenu = () => setIsVisible(false);
 
     useEffect(() => {
-        sortBy('front', true);
+        setSortState({ key: 'front', asc: true });
     }, []);
 
     return (
@@ -35,12 +35,12 @@ export const SortButtonRow = (): JSX.Element => {
                     }
                     style={styles.menu}
                 >
-                    {(Object.keys(SORT_MAP) as SortKey[]).map(sortKey => (
+                    {(Object.keys(SORT_MAP) as SortKey[]).map(key => (
                         <Menu.Item
-                            key={sortKey}
-                            title={SORT_MAP[sortKey]}
+                            key={key}
+                            title={SORT_MAP[key]}
                             onPress={() => {
-                                sortBy(sortKey, true);
+                                setSortState({ key, asc: true });
                                 hideMenu();
                             }}
                         />
@@ -48,7 +48,7 @@ export const SortButtonRow = (): JSX.Element => {
                 </Menu>
                 <IconButton
                     icon={sortState.asc ? 'chevron-up' : 'chevron-down'}
-                    onPress={() => sortBy(sortState.key, !sortState.asc)}
+                    onPress={() => setSortState(prev => ({ key: prev.key, asc: !prev.asc }))}
                 />
             </View>
             <Card.Content style={styles.content}>

@@ -14,7 +14,7 @@ const DoneScreen = ({ onDone }: { onDone: () => void }): JSX.Element => {
                 All done!
             </Text>
             <Text variant="bodyLarge" style={styles.doneSub}>
-                You reviewed all due cards.
+                You reviewed all selected cards.
             </Text>
             <Button mode="contained" onPress={onDone} style={styles.doneBtn}>
                 Back to Home

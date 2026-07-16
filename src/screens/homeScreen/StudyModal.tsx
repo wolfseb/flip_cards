@@ -8,6 +8,7 @@ import { Lesson } from '../../types';
 import { sortCards } from '../../sort';
 import { useSettings } from '../../settings/SettingsContext';
 import { AppTheme, useAppTheme } from '../../themes';
+import { isDue } from '../studyScreen/sm2';
 
 const MIN_STUDY_COUNT = 1;
 const MAX_STUDY_COUNT = 40;
@@ -23,7 +24,7 @@ interface Props {
 
 const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
     const { settings, persistSettings } = useSettings();
-    const { lessons, getCards, getDueCards, queueStudyCards } = useCards();
+    const { lessons, queueStudyCards } = useCards();
     const theme = useAppTheme();
     const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -35,20 +36,21 @@ const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
     };
     const onSelectLesson = (lesson: Lesson): void => {
         setSelectedLesson(lesson);
-        updateStudyCount(getDueCards(lesson.id).length);
+        updateStudyCount(lesson.cards.filter(isDue).length);
     };
 
     useEffect(() => {
         if (lessons.length === 0) return;
-
         onSelectLesson(lessons[0]);
     }, []);
 
     const handleStudy = (): void => {
         if (!selectedLesson) return;
 
-        const cards = getCards(selectedLesson?.id);
-        const cardsToStudy = sortCards(cards, 'nextReview', true).slice(0, studyCount);
+        const cardsToStudy = sortCards(selectedLesson.cards, 'nextReview', true).slice(
+            0,
+            studyCount,
+        );
         queueStudyCards(cardsToStudy);
         onStudy();
     };

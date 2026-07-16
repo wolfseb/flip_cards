@@ -9,12 +9,12 @@ import { memo, useMemo } from 'react';
 const LEVEL_NAMES = ['New', 'Learning 1', 'Learning 2', 'Expert 1', 'Expert 2'];
 
 interface Props {
-    item: Card;
-    currentLesson: Lesson;
+    card: Card;
+    lesson: Lesson;
     onEditCard: (id: string) => void;
 }
 
-const CardRow = ({ item, currentLesson, onEditCard }: Props) => {
+const CardRow = ({ card, lesson, onEditCard }: Props) => {
     const { persistLesson } = useCards();
     const theme = useAppTheme();
     const styles = useMemo(() => createStyles(theme), [theme]);
@@ -23,8 +23,8 @@ const CardRow = ({ item, currentLesson, onEditCard }: Props) => {
         const message = 'This card will be permanently removed.';
         const onPersist = () =>
             persistLesson({
-                ...currentLesson,
-                cards: currentLesson.cards.filter(c => c.id !== id),
+                ...lesson,
+                cards: lesson.cards.filter(c => c.id !== id),
             });
 
         if (Platform.OS === 'web') {
@@ -50,28 +50,28 @@ const CardRow = ({ item, currentLesson, onEditCard }: Props) => {
                 <View style={styles.levelBadge}>
                     <Avatar.Text
                         size={32}
-                        label={`L${item.level}`}
+                        label={`L${card.level}`}
                         labelStyle={styles.levelBadgeText}
-                        style={{ backgroundColor: getLevelColor(theme, item.level) }}
+                        style={{ backgroundColor: getLevelColor(theme, card.level) }}
                     />
-                    <Text style={styles.levelBadgeName}>{LEVEL_NAMES[item.level - 1]}</Text>
+                    <Text style={styles.levelBadgeName}>{LEVEL_NAMES[card.level - 1]}</Text>
                 </View>
 
                 <View style={styles.cardTexts}>
                     <Text style={styles.cardFront} numberOfLines={1}>
-                        {item.front}
+                        {card.front}
                     </Text>
                     <Text style={styles.cardBack} numberOfLines={1}>
-                        {item.back}
+                        {card.back}
                     </Text>
                 </View>
 
                 <View style={styles.rowActions}>
-                    <IconButton icon={'pencil'} onPress={() => onEditCard(item.id)} />
+                    <IconButton icon={'pencil'} onPress={() => onEditCard(card.id)} />
                     <IconButton
                         icon={'delete'}
                         iconColor={theme.colors.error}
-                        onPress={() => onDeleteCard(item.id)}
+                        onPress={() => onDeleteCard(card.id)}
                     />
                 </View>
             </PaperCard.Content>

@@ -10,6 +10,7 @@ import EditLessonModal from './EditLessonModal';
 import SettingsMenu from '../../settings/SettingsMenu';
 import { useSettings } from '../../settings/SettingsContext';
 import { AppTheme, useAppTheme } from '../../themes';
+import { Lesson } from '../../types';
 
 interface Props {
     onStudy: () => void;
@@ -55,13 +56,6 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
         [lessons, persist],
     );
 
-    const renderItem = useCallback(
-        ({ item }: { item: (typeof lessons)[number] }) => (
-            <LessonRow item={item} onEditLesson={onEditLesson} onDeleteLesson={onDeleteLesson} />
-        ),
-        [onEditLesson, onDeleteLesson],
-    );
-
     return (
         <SafeAreaView style={styles.container}>
             <Appbar.Header statusBarHeight={0} dark={settings.dark}>
@@ -87,7 +81,13 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
                     data={lessons}
                     keyExtractor={item => item.id}
                     contentContainerStyle={styles.list}
-                    renderItem={renderItem}
+                    renderItem={item => (
+                        <LessonRow
+                            lesson={item.item}
+                            onEditLesson={onEditLesson}
+                            onDeleteLesson={onDeleteLesson}
+                        />
+                    )}
                 />
             )}
             {lessons.length > 0 && (

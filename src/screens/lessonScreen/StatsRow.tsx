@@ -5,6 +5,7 @@ import { Card, IconButton, Text } from 'react-native-paper';
 import { useCards } from '../../CardsContext';
 import { Lesson } from '../../types';
 import { AppTheme, useAppTheme } from '../../themes';
+import { isDue } from '../studyScreen/sm2';
 
 interface Props {
     lesson: Lesson;
@@ -12,11 +13,11 @@ interface Props {
 }
 
 const StatsRow = ({ lesson, onStudy }: Props): JSX.Element => {
-    const { getCards, getDueCards, queueStudyCards } = useCards();
+    const { queueStudyCards } = useCards();
     const theme = useAppTheme();
     const styles = useMemo(() => createStyles(theme), [theme]);
-    const cards = getCards(lesson.id);
-    const dueCards = getDueCards(lesson.id);
+    const cards = lesson.cards;
+    const dueCards = cards.filter(isDue);
     const dueCount = dueCards.length;
 
     const onStudyAll = () => {
@@ -58,7 +59,9 @@ const StatsRow = ({ lesson, onStudy }: Props): JSX.Element => {
                     <IconButton
                         icon={'school'}
                         onPress={onStudyDue}
-                        iconColor={dueCount > 0 ? theme.colors.primary : theme.colors.onSurfaceVariant}
+                        iconColor={
+                            dueCount > 0 ? theme.colors.primary : theme.colors.onSurfaceVariant
+                        }
                         disabled={dueCount === 0}
                     />
                 </View>

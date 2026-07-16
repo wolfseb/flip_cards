@@ -3,35 +3,34 @@ import { Avatar, IconButton, Card as PaperCard, Text } from 'react-native-paper'
 
 import { Lesson } from '../../types';
 import { memo, useMemo } from 'react';
-import { useCards } from '../../CardsContext';
 import { AppTheme, getLevelColor, useAppTheme } from '../../themes';
+import { isDue } from '../studyScreen/sm2';
 
 const LEVEL_NAMES = ['New', 'Learning 1', 'Learning 2', 'Expert 1', 'Expert 2'];
 
 interface Props {
-    item: Lesson;
+    lesson: Lesson;
     onEditLesson: (id: string) => void;
     onDeleteLesson: (id: string) => void;
 }
 
-const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
-    const { getDueCards } = useCards();
+const LessonRow = ({ lesson, onEditLesson, onDeleteLesson }: Props) => {
     const theme = useAppTheme();
     const styles = useMemo(() => createStyles(theme), [theme]);
-    const dueCards = getDueCards(item.id).length;
+    const dueCards = useMemo(() => lesson.cards.filter(isDue).length, []);
 
     const minLevel = useMemo(
         () =>
-            item.cards
-                ? item.cards.length > 0
-                    ? Math.min(...item.cards.map(c => c.level))
+            lesson.cards
+                ? lesson.cards.length > 0
+                    ? Math.min(...lesson.cards.map(c => c.level))
                     : 0
                 : 0,
-        [item.cards],
+        [lesson.cards],
     );
 
     return (
-        <PaperCard style={styles.cardRow} mode="elevated" onPress={() => onEditLesson(item.id)}>
+        <PaperCard style={styles.cardRow} mode="elevated" onPress={() => onEditLesson(lesson.id)}>
             <PaperCard.Content style={styles.content}>
                 <View style={styles.levelBadge}>
                     <Avatar.Text
@@ -44,19 +43,19 @@ const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
                 </View>
 
                 <Text style={styles.text} numberOfLines={1}>
-                    {item.name}
+                    {lesson.name}
                 </Text>
 
-                {item.cards && item.cards.length > 0 && (
+                {lesson.cards && lesson.cards.length > 0 && (
                     <Text style={styles.text} numberOfLines={1}>
-                        {dueCards + '/' + item.cards.length + ' due'}
+                        {dueCards + '/' + lesson.cards.length + ' due'}
                     </Text>
                 )}
 
                 <View style={styles.rowActions}>
                     <IconButton
                         icon={'delete'}
-                        onPress={() => onDeleteLesson(item.id)}
+                        onPress={() => onDeleteLesson(lesson.id)}
                         iconColor={theme.colors.error}
                     />
                 </View>

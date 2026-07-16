@@ -1,4 +1,4 @@
-import { JSX, useCallback, useEffect, useState } from 'react';
+import { JSX, useCallback, useEffect, useMemo, useState } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -15,64 +15,67 @@ import { darkTheme, lightTheme } from './src/themes';
 SplashScreen.preventAutoHideAsync();
 
 const AppContent = (): JSX.Element => {
-    const { lessons, getCards } = useCards();
     const { settings } = useSettings();
+    const { lessons } = useCards();
     const [screen, setScreen] = useState<Screen>({ name: 'home' });
+    const [origin, setOrigin] = useState<Screen | undefined>();
 
     const lessonId =
         screen.name === 'lesson' || screen.name === 'edit' ? screen.lessonId : undefined;
-    const lesson = lessonId ? lessons.find(l => l.id === lessonId) : undefined;
-    const isMissingLesson = lessonId !== undefined && !lesson;
+    const lesson = useMemo(
+        () => (lessonId ? lessons.find(l => l.id === lessonId) : undefined),
+        [lessons, lessonId],
+    );
+
+    const lessonNotfound = lessonId && !lesson;
 
     useEffect(() => {
-        if (isMissingLesson) setScreen({ name: 'home' });
-    }, [isMissingLesson]);
+        if (lessonNotfound) {
+            setScreen({ name: 'home' });
+        }
+    }, [lessonNotfound]);
 
-    const goHome = useCallback(() => setScreen({ name: 'home' }), []);
-    const goStudy = useCallback(() => setScreen({ name: 'study' }), []);
-    const goEditLesson = useCallback(
-        (lessonId: string) => setScreen({ name: 'lesson', lessonId }),
-        [],
-    );
-
-    const goReturnToLesson = useCallback(() => {
-        if (lessonId) setScreen({ name: 'lesson', lessonId });
-    }, [lessonId]);
-    const goAddCard = useCallback(() => {
-        if (lessonId) setScreen({ name: 'edit', lessonId });
-    }, [lessonId]);
-    const goEditCard = useCallback(
-        (cardId: string) => {
-            if (lessonId) setScreen({ name: 'edit', lessonId, cardId });
-        },
-        [lessonId],
-    );
+    const onStudy = () => {
+        setOrigin(screen);
+        setScreen({ name: 'study' });
+    };
+    const onDone = () => {
+        setScreen(origin ?? { name: 'home' });
+        setOrigin(undefined);
+    };
 
     let content;
     if (screen.name === 'study') {
-        content = <StudyScreen onDone={goHome} />;
+        content = <StudyScreen onDone={onDone} />;
     } else if (screen.name === 'edit' && lesson) {
         content = (
             <EditScreen
                 screen={screen}
                 lesson={lesson}
-                card={getCards(screen.lessonId).find(c => c.id === screen.cardId)}
-                onReturn={goReturnToLesson}
+                card={lesson.cards.find(c => c.id === screen.cardId)}
+                onReturn={() => setScreen({ name: 'lesson', lessonId: screen.lessonId })}
             />
         );
     } else if (screen.name === 'lesson' && lesson) {
         content = (
             <LessonScreen
                 screen={screen}
-                currentLesson={lesson}
-                onStudy={goStudy}
-                onAddCard={goAddCard}
-                onEditCard={goEditCard}
-                onReturn={goHome}
+                lesson={lesson}
+                onStudy={onStudy}
+                onAddCard={() => setScreen({ name: 'edit', lessonId: screen.lessonId })}
+                onEditCard={(cardId: string) =>
+                    setScreen({ name: 'edit', lessonId: screen.lessonId, cardId })
+                }
+                onReturn={() => setScreen({ name: 'home' })}
             />
         );
     } else {
-        content = <HomeScreen onStudy={goStudy} onEditLesson={goEditLesson} />;
+        content = (
+            <HomeScreen
+                onStudy={onStudy}
+                onEditLesson={(id: string) => setScreen({ name: 'lesson', lessonId: id })}
+            />
+        );
     }
 
     return (

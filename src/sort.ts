@@ -35,3 +35,9 @@ export const sortCards = (
     const cmp = comparators[key];
     return [...cards].sort((a, b) => (asc ? cmp(a, b) : cmp(b, a)));
 };
+
+export const filterCards = (cards: Card[], term: string): Card[] => {
+    return cards.filter(
+        c => c.front.toLowerCase().includes(term) || c.back.toLowerCase().includes(term),
+    );
+};
