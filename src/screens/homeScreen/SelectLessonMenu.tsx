@@ -1,4 +1,4 @@
-import { JSX, useState } from 'react';
+import { JSX, useMemo, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Menu, Text } from 'react-native-paper';
 import { Lesson } from '../../types';
@@ -12,7 +12,7 @@ interface Props {
 
 const SelectLessonMenu = ({ lessons, selectedLesson, setSelectedLesson }: Props): JSX.Element => {
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
     const [isVisible, setIsVisible] = useState(false);
     const showMenu = () => setIsVisible(true);
     const hideMenu = () => setIsVisible(false);

@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import { Avatar, IconButton, Card as PaperCard, Text } from 'react-native-paper';
 
 import { Lesson } from '../../types';
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { useCards } from '../../CardsContext';
 import { AppTheme, getLevelColor, useAppTheme } from '../../themes';
 
@@ -17,7 +17,7 @@ interface Props {
 const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
     const { getDueCards } = useCards();
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
     const dueCards = getDueCards(item.id).length;
 
     const minLevel = useMemo(
@@ -65,7 +65,7 @@ const LessonRow = ({ item, onEditLesson, onDeleteLesson }: Props) => {
     );
 };
 
-export default LessonRow;
+export default memo(LessonRow);
 
 const createStyles = (theme: AppTheme) =>
     StyleSheet.create({

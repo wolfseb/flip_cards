@@ -1,4 +1,4 @@
-import { JSX, useState } from 'react';
+import { JSX, useMemo, useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,7 +17,7 @@ interface Props {
 const EditScreen = ({ screen, lesson, card, onReturn }: Props): JSX.Element => {
     const { persistLesson } = useCards();
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
 
     const [front, setFront] = useState(card?.front ?? '');
     const [back, setBack] = useState(card?.back ?? '');

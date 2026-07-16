@@ -1,6 +1,8 @@
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useCallback, useEffect, useState } from 'react';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { MD3LightTheme, PaperProvider } from 'react-native-paper';
+import { PaperProvider } from 'react-native-paper';
 import { Screen } from './src/types';
 import { CardsContextProvider, useCards } from './src/CardsContext';
 import HomeScreen from './src/screens/homeScreen/HomeScreen';
@@ -9,6 +11,8 @@ import EditScreen from './src/screens/EditScreen';
 import LessonScreen from './src/screens/lessonScreen/LessonScreen';
 import { SettingsContextProvider, useSettings } from './src/settings/SettingsContext';
 import { darkTheme, lightTheme } from './src/themes';
+
+SplashScreen.preventAutoHideAsync();
 
 const AppContent = (): JSX.Element => {
     const { lessons, getCards } = useCards();
@@ -24,16 +28,36 @@ const AppContent = (): JSX.Element => {
         if (isMissingLesson) setScreen({ name: 'home' });
     }, [isMissingLesson]);
 
+    const goHome = useCallback(() => setScreen({ name: 'home' }), []);
+    const goStudy = useCallback(() => setScreen({ name: 'study' }), []);
+    const goEditLesson = useCallback(
+        (lessonId: string) => setScreen({ name: 'lesson', lessonId }),
+        [],
+    );
+
+    const goReturnToLesson = useCallback(() => {
+        if (lessonId) setScreen({ name: 'lesson', lessonId });
+    }, [lessonId]);
+    const goAddCard = useCallback(() => {
+        if (lessonId) setScreen({ name: 'edit', lessonId });
+    }, [lessonId]);
+    const goEditCard = useCallback(
+        (cardId: string) => {
+            if (lessonId) setScreen({ name: 'edit', lessonId, cardId });
+        },
+        [lessonId],
+    );
+
     let content;
     if (screen.name === 'study') {
-        content = <StudyScreen onDone={() => setScreen({ name: 'home' })} />;
+        content = <StudyScreen onDone={goHome} />;
     } else if (screen.name === 'edit' && lesson) {
         content = (
             <EditScreen
                 screen={screen}
                 lesson={lesson}
                 card={getCards(screen.lessonId).find(c => c.id === screen.cardId)}
-                onReturn={() => setScreen({ name: 'lesson', lessonId: screen.lessonId })}
+                onReturn={goReturnToLesson}
             />
         );
     } else if (screen.name === 'lesson' && lesson) {
@@ -41,21 +65,14 @@ const AppContent = (): JSX.Element => {
             <LessonScreen
                 screen={screen}
                 currentLesson={lesson}
-                onStudy={() => setScreen({ name: 'study' })}
-                onAddCard={() => setScreen({ name: 'edit', lessonId: screen.lessonId })}
-                onEditCard={(cardId: string) =>
-                    setScreen({ name: 'edit', lessonId: screen.lessonId, cardId })
-                }
-                onReturn={() => setScreen({ name: 'home' })}
+                onStudy={goStudy}
+                onAddCard={goAddCard}
+                onEditCard={goEditCard}
+                onReturn={goHome}
             />
         );
     } else {
-        content = (
-            <HomeScreen
-                onStudy={() => setScreen({ name: 'study' })}
-                onEditLesson={id => setScreen({ name: 'lesson', lessonId: id })}
-            />
-        );
+        content = <HomeScreen onStudy={goStudy} onEditLesson={goEditLesson} />;
     }
 
     return (
@@ -65,7 +82,21 @@ const AppContent = (): JSX.Element => {
     );
 };
 
-const App = (): JSX.Element => {
+const App = (): JSX.Element | null => {
+    const [fontsLoaded] = useFonts({
+        MaterialDesignIcons: require('@react-native-vector-icons/material-design-icons/fonts/MaterialDesignIcons.ttf'),
+    });
+
+    useEffect(() => {
+        if (fontsLoaded) {
+            SplashScreen.hideAsync();
+        }
+    }, [fontsLoaded]);
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
     return (
         <SettingsContextProvider>
             <CardsContextProvider>

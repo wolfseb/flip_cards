@@ -1,4 +1,4 @@
-import { JSX, useState } from 'react';
+import { JSX, useCallback, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Appbar, FAB, Text } from 'react-native-paper';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -32,13 +32,25 @@ const LessonScreen = ({
     const { getSorted } = useCards();
     const insets = useSafeAreaInsets();
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
 
     const [isEditingName, setIsEditingName] = useState(false);
     const editName = () => setIsEditingName(true);
     const endEditingName = () => setIsEditingName(false);
 
     const handleAddCard = () => onAddCard();
+
+    const sortedCards = useMemo(
+        () => getSorted(currentLesson.id),
+        [getSorted, currentLesson.id],
+    );
+
+    const renderItem = useCallback(
+        ({ item }: { item: (typeof sortedCards)[number] }) => (
+            <CardRow item={item} onEditCard={onEditCard} currentLesson={currentLesson} />
+        ),
+        [onEditCard, currentLesson],
+    );
 
     return (
         <SafeAreaView style={styles.container}>
@@ -63,16 +75,10 @@ const LessonScreen = ({
                 </View>
             ) : (
                 <FlatList
-                    data={getSorted(currentLesson.id)}
+                    data={sortedCards}
                     keyExtractor={item => item.id}
                     contentContainerStyle={styles.list}
-                    renderItem={({ item }) => (
-                        <CardRow
-                            item={item}
-                            onEditCard={id => onEditCard(id)}
-                            currentLesson={currentLesson}
-                        />
-                    )}
+                    renderItem={renderItem}
                 />
             )}
 

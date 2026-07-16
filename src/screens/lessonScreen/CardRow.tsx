@@ -4,6 +4,7 @@ import { Avatar, IconButton, Card as PaperCard, Text } from 'react-native-paper'
 import { Card, Lesson } from '../../types';
 import { useCards } from '../../CardsContext';
 import { AppTheme, getLevelColor, useAppTheme } from '../../themes';
+import { memo, useMemo } from 'react';
 
 const LEVEL_NAMES = ['New', 'Learning 1', 'Learning 2', 'Expert 1', 'Expert 2'];
 
@@ -16,7 +17,7 @@ interface Props {
 const CardRow = ({ item, currentLesson, onEditCard }: Props) => {
     const { persistLesson } = useCards();
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
 
     const onDeleteCard = (id: string): void => {
         const message = 'This card will be permanently removed.';
@@ -78,7 +79,7 @@ const CardRow = ({ item, currentLesson, onEditCard }: Props) => {
     );
 };
 
-export default CardRow;
+export default memo(CardRow);
 
 const createStyles = (theme: AppTheme) =>
     StyleSheet.create({

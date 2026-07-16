@@ -1,11 +1,12 @@
 import { JSX } from 'react/jsx-runtime';
+import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { AppTheme, useAppTheme } from '../../themes';
 
 const DoneScreen = ({ onDone }: { onDone: () => void }): JSX.Element => {
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
 
     return (
         <View style={styles.doneView}>

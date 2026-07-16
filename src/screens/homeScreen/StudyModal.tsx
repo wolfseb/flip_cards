@@ -1,5 +1,5 @@
 import Slider from '@react-native-community/slider';
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Dialog, Modal, Switch, Text, TextInput } from 'react-native-paper';
 import { useCards } from '../../CardsContext';
@@ -25,7 +25,7 @@ const StudyModal = ({ visible, hideModal, onStudy }: Props): JSX.Element => {
     const { settings, persistSettings } = useSettings();
     const { lessons, getCards, getDueCards, queueStudyCards } = useCards();
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
 
     const [selectedLesson, setSelectedLesson] = useState<Lesson | undefined>(undefined);
 

@@ -1,4 +1,4 @@
-import { JSX, useState } from 'react';
+import { JSX, useCallback, useMemo, useState } from 'react';
 import { Alert, FlatList, Platform, StyleSheet, View } from 'react-native';
 import { Appbar, Button, FAB, Text } from 'react-native-paper';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,7 +21,7 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
     const { lessons, persist } = useCards();
     const insets = useSafeAreaInsets();
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
 
     const [isStudyModalVisible, setIsStudyModalVisible] = useState(false);
     const showStudyModal = () => setIsStudyModalVisible(true);
@@ -31,26 +31,36 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
     const showLessonModal = () => setIsLessonModalVisible(true);
     const hideLessonModal = () => setIsLessonModalVisible(false);
 
-    const onDeleteLesson = (id: string): void => {
-        const message = 'This card will be permanently removed.';
-        const onPersist = () => persist(lessons.filter(l => l.id !== id));
+    const onDeleteLesson = useCallback(
+        (id: string): void => {
+            const message = 'This card will be permanently removed.';
+            const onPersist = () => persist(lessons.filter(l => l.id !== id));
 
-        if (Platform.OS === 'web') {
-            if (window.confirm(`Delete card\n\n${message}`)) {
-                onPersist();
+            if (Platform.OS === 'web') {
+                if (window.confirm(`Delete card\n\n${message}`)) {
+                    onPersist();
+                }
+                return;
             }
-            return;
-        }
 
-        Alert.alert('Delete card', message, [
-            { text: 'Cancel', style: 'cancel' },
-            {
-                text: 'Delete',
-                style: 'destructive',
-                onPress: onPersist,
-            },
-        ]);
-    };
+            Alert.alert('Delete card', message, [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: onPersist,
+                },
+            ]);
+        },
+        [lessons, persist],
+    );
+
+    const renderItem = useCallback(
+        ({ item }: { item: (typeof lessons)[number] }) => (
+            <LessonRow item={item} onEditLesson={onEditLesson} onDeleteLesson={onDeleteLesson} />
+        ),
+        [onEditLesson, onDeleteLesson],
+    );
 
     return (
         <SafeAreaView style={styles.container}>
@@ -77,13 +87,7 @@ const HomeScreen = ({ onStudy, onEditLesson }: Props): JSX.Element => {
                     data={lessons}
                     keyExtractor={item => item.id}
                     contentContainerStyle={styles.list}
-                    renderItem={({ item }) => (
-                        <LessonRow
-                            item={item}
-                            onEditLesson={onEditLesson}
-                            onDeleteLesson={onDeleteLesson}
-                        />
-                    )}
+                    renderItem={renderItem}
                 />
             )}
             {lessons.length > 0 && (

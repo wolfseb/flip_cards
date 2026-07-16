@@ -1,9 +1,6 @@
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Appbar, Menu } from 'react-native-paper';
-import { loadSettings, saveSettings } from '../storage';
-import { Settings } from '../types';
-import { useCards } from '../CardsContext';
 import { useSettings } from '../settings/SettingsContext';
 
 const SettingsMenu = (): JSX.Element => {

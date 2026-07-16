@@ -1,4 +1,4 @@
-import React, { JSX, useEffect, useRef, useState } from 'react';
+import React, { JSX, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { AppTheme, useAppTheme } from '../../themes';
@@ -17,7 +17,7 @@ const CardFace = ({
     children: React.JSX.Element;
 }): JSX.Element => {
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
 
     const rotate = anim.interpolate({
         inputRange: [0, 1],
@@ -62,7 +62,7 @@ const FlipCard = ({
     flippable,
 }: Props): JSX.Element => {
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
 
     const [flipped, setFlipped] = useState(false);
     const [isFlipping, setIsFlipping] = useState(false);

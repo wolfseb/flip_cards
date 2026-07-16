@@ -1,4 +1,4 @@
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,7 +20,7 @@ const StudyScreen = ({ onDone }: Props): JSX.Element => {
     const { settings } = useSettings();
     const { lessons, studyCards, persist } = useCards();
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
 
     const [currentCards, setCurrentCards] = useState<StudyCard[]>(studyCards);
     const [index, setIndex] = useState(0);

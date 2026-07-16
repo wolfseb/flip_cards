@@ -1,4 +1,4 @@
-import { JSX } from 'react';
+import { JSX, useMemo } from 'react';
 import { Alert, Platform, StyleSheet, View } from 'react-native';
 import { Chip, Text } from 'react-native-paper';
 import { AppTheme, useAppTheme } from '../../themes';
@@ -11,7 +11,7 @@ interface Props {
 
 const Header = ({ onAbort, index, total }: Props): JSX.Element => {
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
 
     const handleAbort = () => {
         const message =

@@ -1,4 +1,4 @@
-import { JSX } from 'react';
+import { JSX, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Card, IconButton, Text } from 'react-native-paper';
 
@@ -14,7 +14,7 @@ interface Props {
 const StatsRow = ({ lesson, onStudy }: Props): JSX.Element => {
     const { getCards, getDueCards, queueStudyCards } = useCards();
     const theme = useAppTheme();
-    const styles = createStyles(theme);
+    const styles = useMemo(() => createStyles(theme), [theme]);
     const cards = getCards(lesson.id);
     const dueCards = getDueCards(lesson.id);
     const dueCount = dueCards.length;

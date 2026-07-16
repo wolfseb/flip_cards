@@ -5,6 +5,7 @@ import {
     useCallback,
     useContext,
     useEffect,
+    useMemo,
     useState,
 } from 'react';
 
@@ -62,16 +63,22 @@ export const CardsContextProvider = ({ children }: { children: ReactNode }): Rea
         });
     }, []);
 
-    const persist = (updated: Lesson[]): void => {
+    const persist = useCallback((updated: Lesson[]): void => {
         setLessons(updated);
         saveData(updated);
-    };
+    }, []);
 
-    const persistLesson = (updated: Lesson): void => {
-        persist(lessons.map(l => (l.id === updated.id ? updated : l)));
-    };
+    const persistLesson = useCallback(
+        (updated: Lesson): void => {
+            persist(lessons.map(l => (l.id === updated.id ? updated : l)));
+        },
+        [lessons, persist],
+    );
 
-    const getCards = (lessonId: string) => lessons.find(l => l.id === lessonId)?.cards ?? [];
+    const getCards = useCallback(
+        (lessonId: string) => lessons.find(l => l.id === lessonId)?.cards ?? [],
+        [lessons],
+    );
 
     const getSorted = useCallback(
         (lessonId: string) => {
@@ -85,46 +92,65 @@ export const CardsContextProvider = ({ children }: { children: ReactNode }): Rea
                 : getCards(lessonId);
             return sortCards(filtered, sortState.key, sortState.asc);
         },
-        [lessons, sortState.key, sortState.asc, searchTerm],
+        [getCards, sortState.key, sortState.asc, searchTerm],
     );
 
-    const getAllDueCards = (): Card[] => lessons.flatMap(l => l.cards).filter(isDue);
-    const getDueCards = (lessonId: string): Card[] => getCards(lessonId).filter(isDue) ?? [];
+    const getAllDueCards = useCallback(
+        (): Card[] => lessons.flatMap(l => l.cards).filter(isDue),
+        [lessons],
+    );
+    const getDueCards = useCallback(
+        (lessonId: string): Card[] => getCards(lessonId).filter(isDue) ?? [],
+        [getCards],
+    );
 
-    const sortBy = (sortKey: SortKey, asc: boolean): void => {
+    const sortBy = useCallback((sortKey: SortKey, asc: boolean): void => {
         setSortState({
             key: sortKey,
             asc: asc,
         });
-    };
+    }, []);
 
-    const queueStudyCards = (cards: Card[]): void => {
+    const queueStudyCards = useCallback((cards: Card[]): void => {
         setStudyCards(shuffleCards(cards.map(toStudyCard)));
-    };
+    }, []);
 
-    return (
-        <CardsContext.Provider
-            value={{
-                lessons,
-                getCards,
-                getSorted,
-                sortState,
-                sortBy,
-                searchTerm,
-                setSearchTerm,
-                getDueCards,
-                getAllDueCards,
-                studyCards,
-                queueStudyCards,
-                isInverted,
-                setIsInverted,
-                persist,
-                persistLesson,
-            }}
-        >
-            {children}
-        </CardsContext.Provider>
+    const value = useMemo<CardsContextValue>(
+        () => ({
+            lessons,
+            getCards,
+            getSorted,
+            sortState,
+            sortBy,
+            searchTerm,
+            setSearchTerm,
+            getDueCards,
+            getAllDueCards,
+            studyCards,
+            queueStudyCards,
+            isInverted,
+            setIsInverted,
+            persist,
+            persistLesson,
+        }),
+        [
+            lessons,
+            getCards,
+            getSorted,
+            sortState,
+            sortBy,
+            searchTerm,
+            getDueCards,
+            getAllDueCards,
+            studyCards,
+            queueStudyCards,
+            isInverted,
+            persist,
+            persistLesson,
+        ],
     );
+
+    return <CardsContext.Provider value={value}>{children}</CardsContext.Provider>;
 };
 
 export const useCards = (): CardsContextValue => {
