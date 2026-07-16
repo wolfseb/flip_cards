@@ -1,10 +1,10 @@
-import { JSX, useCallback, useMemo, useState } from 'react';
+import { JSX, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Appbar, FAB, Text } from 'react-native-paper';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useCards } from '../../CardsContext';
-import { Card, Lesson, Screen } from '../../types';
+import { Lesson, Screen } from '../../types';
 import StatsRow from './StatsRow';
 import { SortButtonRow } from './SortButtonRow';
 import CardRow from './CardRow';

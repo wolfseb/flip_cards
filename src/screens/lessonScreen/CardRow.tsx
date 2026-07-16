@@ -54,7 +54,7 @@ const CardRow = ({ card, lesson, onEditCard }: Props) => {
                         labelStyle={styles.levelBadgeText}
                         style={{ backgroundColor: getLevelColor(theme, card.level) }}
                     />
-                    <Text style={styles.levelBadgeName}>{LEVEL_NAMES[card.level - 1]}</Text>
+                    {/* <Text style={styles.levelBadgeName}>{LEVEL_NAMES[card.level - 1]}</Text> */}
                 </View>
 
                 <View style={styles.cardTexts}>
@@ -91,6 +91,7 @@ const createStyles = (theme: AppTheme) =>
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
+            height: 60,
         },
         levelBadge: {
             alignItems: 'center',

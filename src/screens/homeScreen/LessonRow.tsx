@@ -39,7 +39,7 @@ const LessonRow = ({ lesson, onEditLesson, onDeleteLesson }: Props) => {
                         labelStyle={styles.levelBadgeText}
                         style={{ backgroundColor: getLevelColor(theme, minLevel) }}
                     />
-                    <Text style={styles.levelBadgeName}>{LEVEL_NAMES[minLevel - 1]}</Text>
+                    {/* <Text style={styles.levelBadgeName}>{LEVEL_NAMES[minLevel - 1]}</Text> */}
                 </View>
 
                 <Text style={styles.text} numberOfLines={1}>
@@ -76,6 +76,7 @@ const createStyles = (theme: AppTheme) =>
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
+            height: 60,
         },
         levelBadge: {
             alignItems: 'center',
