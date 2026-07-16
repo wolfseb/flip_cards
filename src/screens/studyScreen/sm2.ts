@@ -4,18 +4,15 @@ export const applyReview = (card: StudyCard): StudyCard => {
     let { repetitions, easeFactor, interval, quality } = card;
 
     if (quality >= 3) {
-        // Correct response: advance interval
         if (repetitions === 0) interval = 1;
         else if (repetitions === 1) interval = 6;
         else interval = Math.round(interval * easeFactor);
         repetitions += 1;
     } else {
-        // Incorrect: reset to beginning
         repetitions = 0;
         interval = 1;
     }
 
-    // EF update formula from SM-2
     easeFactor = Math.max(1.3, easeFactor + 0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
 
     const next = new Date();
