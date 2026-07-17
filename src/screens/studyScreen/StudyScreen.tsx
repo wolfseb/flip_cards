@@ -149,10 +149,10 @@ const createStyles = (theme: AppTheme) =>
         answerInput: {
             alignSelf: 'stretch',
             paddingTop: 8,
-            minHeight: 80,
+            minHeight: 40,
         },
         checkBtn: {
-            minHeight: 64,
+            minHeight: 54,
             borderRadius: 4,
             alignSelf: 'stretch',
             justifyContent: 'center',

@@ -96,13 +96,13 @@ const FlipCard = ({
             >
                 <>
                     <Text style={styles.cardText}>{front}</Text>
-                    <Text style={styles.cardComment}>{frontComment}</Text>
+                    {frontComment && <Text style={styles.cardComment}>{frontComment}</Text>}
                 </>
             </CardFace>
             <CardFace anim={anim} tintColor={tintColor} showShadow={!isFlipping && flipped}>
                 <>
                     <Text style={styles.cardText}>{back}</Text>
-                    <Text style={styles.cardComment}>{backComment}</Text>
+                    {backComment && <Text style={styles.cardComment}>{backComment}</Text>}
                 </>
             </CardFace>
         </Pressable>
@@ -116,7 +116,8 @@ const createStyles = (theme: AppTheme) =>
         container: {
             width: 400,
             maxWidth: '100%',
-            height: 180,
+            height: 140,
+            maxHeight: 180,
         },
         shadow: {
             borderRadius: 16,
